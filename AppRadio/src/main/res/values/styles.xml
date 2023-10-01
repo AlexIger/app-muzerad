@@ -1,0 +1,88 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorControlActivated">#00838F</item>
+        <item name="android:itemTextAppearance">@style/PopupOverlay</item>
+        <item name="android:editTextColor">@color/searchTextColor</item>
+        <item name="android:textColorPrimary">@color/textColor</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+        <item name="android:textColorTertiary">@color/textColorTertiary</item>
+        <item name="aboutStyle">@style/Widget.AboutPage</item>
+        <item name="preferenceTheme">@style/AppTheme.PreferenceTheme</item>
+
+        <!--        <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow.Icon</item>-->
+    </style>
+
+    <!-- -Action Bar -->
+    <style name="ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:displayOptions">homeAsUp</item>
+        <item name="android:tint">@color/textColorSecondary</item>
+    </style>
+
+
+    <!--    <style name="ActionButton.Overflow.Icon" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">-->
+    <!--        <item name="android:src">@drawable/ic_more_vert_new</item>-->
+    <!--    </style>-->
+
+    <style name="ActionBarText" parent="AppTheme">
+        <item name="android:fontFamily">@font/lato_bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/textColorSecondary</item>
+    </style>
+
+    <!-- Popup Option Window -->
+    <style name="PopupOverlay" parent="ThemeOverlay.AppCompat">
+        <!--        <item name="android:textColor">#374151</item>-->
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:fontFamily">@font/lato</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- EQ switch -->
+    <style name="CustomSwitch" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">#FDFDFC</item>
+        <item name="colorSwitchThumbNormal">#565656</item>
+        <item name="android:colorForeground">#383838</item>
+    </style>
+
+    <!--Splash-->
+    <!--     Splash-->
+    <!--    <style name="SplashTheme" parent="AppTheme">-->
+    <!--        <item name="android:windowBackground">@drawable/splash_screen</item>-->
+    <!--    </style>-->
+
+
+    <!--Splash-->
+    <style name="Theme.SplashTheme" parent="Theme.SplashScreen">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+    </style>
+
+    <!-- About page -->
+    <style name="Widget.AboutPage" parent="about_About">
+        <item name="aboutBackground">@color/windowBackground</item>
+        <item name="aboutElementIconTint">#333333</item>
+        <item name="aboutSeparatorColor">#999999</item>
+        <item name="aboutDescriptionTextAppearance">
+            @style/TextAppearance.App.AboutPage.Description
+        </item>
+
+        <!-- similarly, you can also apply the following text appearances -->
+        <item name="aboutElementTextAppearance">@style/about_elementTextAppearance.Dark</item>
+        <item name="aboutGroupTextAppearance">@style/about_groupTextAppearance</item>
+    </style>
+
+    <style name="TextAppearance.App.AboutPage.Description" parent="about_descriptionTextAppearance.Dark">
+        <item name="android:textStyle">bold|italic</item>
+    </style>
+
+    <style name="AppTheme.PreferenceTheme" parent="PreferenceThemeOverlay.v14.Material">
+        <item name="android:fontFamily">@font/lato</item>
+    </style>
+
+</resources>
+
+

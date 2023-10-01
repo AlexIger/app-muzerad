@@ -1,0 +1,155 @@
+//apply plugin: 'com.android.application'
+
+plugins {
+    id 'com.android.application'
+}
+
+
+android {
+
+    compileSdk 33
+    lintOptions { abortOnError false }
+    defaultConfig {
+
+        applicationId "com.cyberia.radio.AppRadio"
+        minSdk 26
+        targetSdkVersion 33
+        versionCode 609
+        versionName "6.9"
+//        vectorDrawables.useSupportLibrary = true
+
+        packagingOptions {
+            exclude 'META-INF/NOTICE.md'
+            exclude 'META-INF/LICENSE.md'
+            exclude 'META-INF/NOTICE.markdown'
+        }
+
+        testOptions {
+            unitTests.returnDefaultValues = true
+
+            testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        }
+
+
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
+
+        buildFeatures {
+            viewBinding true
+        }
+
+        packagingOptions {
+            // Allow the compilation process to choose the dependencies for us.
+            pickFirst "**"
+        }
+    }
+
+    dependencies {
+        implementation 'com.google.android.gms:play-services-plus:17.0.0'
+        implementation 'androidx.appcompat:appcompat:1.6.1'
+//    implementation project(':library')
+        implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+        // gson library
+        implementation 'com.google.code.gson:gson:2.10.1'
+
+        //Room
+        implementation 'androidx.room:room-runtime:2.5.0'
+        implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+        annotationProcessor 'androidx.room:room-compiler:2.5.0'
+        // Lifecycle components
+//    implementation 'android.arch.lifecycle:extensions:1.1.1'
+//    annotationProcessor 'android.arch.lifecycle:compiler:1.1.1'
+
+        // radiobrowser
+//    implementation('de.sfuhrm:radiobrowser4j:2.2.4')
+
+
+        // radiobrowser
+        implementation('de.sfuhrm:radiobrowser4j:2.2.2')
+//            {
+//                exclude group:'jakarta.activation', module:'jakarta.activation-api'
+//                exclude group: 'javax.activation', module:'javax.activation-api'
+//            }
+
+                {
+                    exclude module: 'jakarta.activation-api'
+                }
+
+//    implementation 'org.projectlombok:lombok:1.18.12'
+        annotationProcessor 'org.projectlombok:lombok:1.18.26'
+
+        //Exoplayer
+        implementation 'com.google.android.exoplayer:exoplayer:2.18.4'
+//    implementation 'com.google.android.exoplayer:exoplayer-core:2.9.0'
+
+        implementation 'com.squareup.picasso:picasso:2.71828'
+
+        implementation 'androidx.preference:preference:1.2.0'
+        implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
+
+        implementation 'com.diogobernardino:williamchart:2.1'
+        implementation 'io.github.medyo:android-about-page:2.0.0'
+
+        implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
+
+        implementation 'org.greenrobot:eventbus:3.3.1'
+
+        implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
+
+        implementation 'com.google.android.exoplayer:extension-mediasession:2.18.4'
+
+        implementation 'com.github.bumptech.glide:glide:4.15.1'
+
+        //logger
+        implementation 'org.slf4j:slf4j-log4j12:1.7.29'
+
+
+        // JUnit 4
+        testImplementation 'junit:junit:4.13.2'
+        androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+        androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+        // Core library
+        androidTestImplementation 'androidx.test:core:1.5.0'
+
+        // AndroidJUnitRunner and JUnit Rules
+        androidTestImplementation 'androidx.test:runner:1.5.2'
+        androidTestImplementation 'androidx.test:rules:1.5.0'
+
+        // Assertions
+        androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+        androidTestImplementation 'androidx.test.ext:truth:1.5.0'
+        androidTestImplementation  'com.google.truth:truth:1.1.4'
+
+        // JUnit 5 debug
+        testDebugImplementation('org.junit.jupiter:junit-jupiter:5.9.2')
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+        // Mockito
+        testImplementation 'org.mockito:mockito-core:4.9.0'
+        testImplementation "org.mockito:mockito-inline:+"
+
+        // Splash
+        implementation "androidx.core:core-splashscreen:1.0.1"
+
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+
+//        // Power mock
+//        testImplementation "org.powermock:powermock-module-junit4:2.0.7"
+//        testImplementation "org.powermock:powermock-module-junit4-rule:2.0.7"
+//        testImplementation "org.powermock:powermock-api-mockito2:2.0.7"
+//        testImplementation "org.powermock:powermock-classloading-xstream:1.6.6"
+
+//    implementation 'commons-io:commons-io:2.11.0'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_16
+        targetCompatibility JavaVersion.VERSION_16
+    }
+
+}
+

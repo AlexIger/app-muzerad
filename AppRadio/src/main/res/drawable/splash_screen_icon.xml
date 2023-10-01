@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+<!--        <item android:drawable="@drawable/splash_gradient"-->
+<!--            android:width="160dp"-->
+<!--            android:height="160dp"-->
+<!--            android:gravity="center"/>-->
+
+
+    <item android:gravity="center">
+        <shape
+            android:shape="oval">
+            <solid android:color="@color/windowBackground"/>
+            <size android:width="80dp" android:height="80dp"/>
+        </shape>
+
+    </item>
+
+    <item android:gravity="center"
+        android:drawable="@drawable/ic__splash_logo_fat"
+        android:width="60dp"
+        android:height="60dp" />
+
+</layer-list>
+
+
+

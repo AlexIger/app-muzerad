@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+   
+    android:visibility="visible"
+    android:clickable="true"
+    tools:context="com.cyberia.radio.radiodetails.RadioDetailFragment">
+
+    <ImageView
+        android:id="@+id/imgRadioDetail"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="radio_detail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imgHomepage"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:autofillHints="Home"
+        android:contentDescription="Webpage"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/lblHomepage"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/lblHomepage"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/lblHomepage"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="Homepage"
+        android:hint="N/A"
+        android:paddingHorizontal="4dp"
+        android:textSize="16sp"
+        android:fontFamily="@font/lato"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imgHomepage"
+        app:layout_constraintTop_toBottomOf="@+id/lblBitrateText" />
+
+    <TextView
+        android:id="@+id/lblBitrate"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:paddingHorizontal="4dp"
+        android:text="Bitrate:"
+        android:fontFamily="@font/lato_bold"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/lblBitrateText"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/lblBitrateText" />
+
+    <TextView
+        android:id="@+id/lblBitrateText"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:hint="N/A"
+        android:fontFamily="@font/lato"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="16sp"
+        android:paddingHorizontal="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintStart_toEndOf="@+id/lblBitrate"
+        app:layout_constraintTop_toBottomOf="@+id/lblCodecText" />
+
+    <TextView
+        android:id="@+id/lblCountry"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:paddingHorizontal="4dp"
+        android:text="Country:"
+        android:fontFamily="@font/lato_bold"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/lblCountryText"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/lblCountryText" />
+
+    <TextView
+        android:id="@+id/lblCountryText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:hint="N/A"
+        android:fontFamily="@font/lato"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="16sp"
+        android:paddingHorizontal="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintStart_toEndOf="@+id/lblCountry"
+        app:layout_constraintTop_toBottomOf="@+id/lblLangText" />
+
+    <TextView
+        android:id="@+id/lblCodec"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:paddingHorizontal="4dp"
+        android:text="Codec:"
+        android:fontFamily="@font/lato_bold"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/lblCodecText"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/lblCodecText" />
+
+    <TextView
+        android:id="@+id/lblCodecText"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:hint="N/A"
+        android:fontFamily="@font/lato"
+        android:textColor="?android:attr/textColorSecondary"
+        android:paddingHorizontal="4dp"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintStart_toEndOf="@+id/lblCodec"
+        app:layout_constraintTop_toBottomOf="@+id/lblCountryText" />
+
+    <TextView
+        android:id="@+id/lblLang"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:paddingHorizontal="4dp"
+        android:text="Language:"
+        android:fontFamily="@font/lato_bold"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/lblLangText"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/lblLangText" />
+
+    <TextView
+        android:id="@+id/lblLangText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:hint="N/A"
+        android:fontFamily="@font/lato"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="16sp"
+        android:paddingHorizontal="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintStart_toEndOf="@+id/lblLang"
+        app:layout_constraintTop_toBottomOf="@+id/lblGenreText" />
+
+    <TextView
+        android:id="@+id/lblGenre"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:paddingHorizontal="4dp"
+        android:text="Genre:"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="16sp"
+        android:fontFamily="@font/lato_bold"
+        app:layout_constraintEnd_toStartOf="@+id/lblGenreText"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/lblGenreText" />
+
+    <TextView
+        android:id="@+id/lblGenreText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="8dp"
+        android:hint="N/A"
+        android:fontFamily="@font/lato"
+        android:textColor="?android:attr/textColorSecondary"
+        android:paddingHorizontal="4dp"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintStart_toEndOf="@+id/lblGenre"
+        app:layout_constraintTop_toBottomOf="@+id/lblStation" />
+
+    <TextView
+        android:id="@+id/lblStation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:autoSizeTextType="uniform"
+        android:hint="Station"
+        android:fontFamily="@font/lato_bold"
+        android:textColor="?android:attr/textColorPrimary"
+        android:paddingHorizontal="4dp"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imgRadioDetail"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

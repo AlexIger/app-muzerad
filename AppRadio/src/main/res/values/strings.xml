@@ -1,0 +1,182 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Muze Radio</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_equalizer">Equalizer</string>
+    <string name="menu_about">About</string>
+    <string name="add_favorite">Add to Favorites</string>
+    <string name="empty_list">Empty</string>
+    <string name="empty_text">""</string>
+    <string name="eq">Equalizer</string>
+
+
+
+
+    <!--    <string name="app_name_version">Muze Radio 2.0</string>-->
+
+    <string name="radio_share">Share</string>
+    <string name="radio_info">Info</string>
+    <string name="_station_title_hint">Muze Radio</string>
+
+    <!--AppBarStates-->
+    <string name="appbar_home">Home</string>
+    <string name="cover_art">Cover Art</string>
+    <string name="station_image">station_image</string>
+    <string name="added_to_favorites">Added to Favorites: </string>
+
+    <!-- Settings strings-->
+
+    <string name="pref_last_played">Last played</string>
+    <string name="pref_buffer_size">Playback buffer</string>
+    <string name="pref_media_button">Headset support</string>
+    <string name="pref_day_night">Dark mode</string>
+    <string name="pref_panel_mode">Station screen</string>
+
+    <string name="pref_media_button_summary">Enable bluetooth media button</string>
+    <string name="pref_last_played_summary">Remember the last station played</string>
+    <string name="pref_buffer_summary">Set playback buffer</string>
+    <string name="pref_timeout_summary">Set server connection timeout</string>
+    <string name="pref_daynight_summary">Enable dark skin (restart required)</string>
+    <string name="pref_panel_mode_summary">Show station screen on playback</string>
+
+
+    <string name="link_homepage">Visit Homepage</string>
+    <string name="default_buffer_size_int">64000</string>
+    <string name="default_connection_timeout_int">5000</string>
+    <string name="pref_equalizer_colors_summary">Set preferred color</string>
+    <string name="default_equaliser_color_hex">#4caf50</string>
+
+
+    <!--Preference page -->
+    <string name="about_description">
+            Muze Radio is a project by Dr I. A. Ambalov for educational purposes.
+            The app is free of ads and fees.
+            The development is still in progress, so bug reports are welcomed.
+            For information, use the email below. Happy radiomuzing.
+    </string>
+
+    <string name="about_app_license">
+        This software is lisensed under the GPLv3.\n
+        https://www.gnu.org/licenses/gpl-3.0.en.html
+    </string>
+
+    <string name="about_credits_item_1">
+        Radio stations database\n
+        \nProject: Radiobrowser4j
+        \nhttps://github.com/sfuhrm/radiobrowser4j
+        \nLicense Apache-2.0
+    </string>
+
+    <string name="about_credits_item_2">
+        Cover art database\n
+        \nProject: Musicbrainz
+        \nhttp://www.musicbrainz.org
+        \nLicense Creative Commons CC0 1.0 Universal
+    </string>
+
+    http://www.musicbrainz.org
+
+    <string name="about_credits_item_3">
+        Image loading\n
+        \nProject: Picasso
+        \nhttps://square.github.io/picasso
+        \nLicense Apache-2.0
+
+    </string>
+
+    <string name="about_credits_item_4">
+        Equalizer\n
+        \nProject: MusicDNA
+        \nhttps://github.com/harjot-oberai/MusicDNA
+        \nLicense Creative Commons 3.0 Attribution
+    </string>
+
+    <string name="about_credits_item_5">
+        Graphics\n
+        \nProject: Freepik
+        \nhttps://www.flaticon.com/authors/freepik
+        \nLicense Creative Commons 3.0 Attribution\n
+
+        \nProject: Smashicons
+        \nhttps://www.flaticon.com/authors/smashicons
+        \nLicense Creative Commons 3.0 Attribution
+    </string>
+
+    <string name="about_credits_item_6">
+        About page\n
+        \nProject: Android About Page
+        \nhttps://github.com/medyo/android-about-page
+        \nLicense MIT
+    </string>
+
+
+    <string-array name="sub_music">
+        <item>Alternative</item>
+        <item>Blues</item>
+        <item>Chillout</item>
+        <item>Christmas</item>
+        <item>Classical</item>
+        <item>Country</item>
+        <item>Dance</item>
+        <item>Funk</item>
+        <item>Jazz</item>
+        <item>Latin</item>
+        <item>Lounge</item>
+        <item>Oldies</item>
+        <item>Pop</item>
+        <item>R&amp;B</item>
+        <item>Rap</item>
+        <item>Reggae</item>
+        <item>Rock</item>
+        <item>Techno</item>
+    </string-array>
+
+    <string-array name="sub_talk">
+        <item>Comedy</item>
+        <item>General</item>
+        <item>News</item>
+        <item>Sports</item>
+
+    </string-array>
+
+    <!--About page -->
+    <string-array name="buffer_size_items">
+        <item>XSmall: 64k</item>item>
+        <item>Small: 128k</item>item>
+        <item>Medium: 256k</item>item>
+        <item>Large: 512k</item>item>
+        <item>XLarge: 1024k</item>item>
+    </string-array>
+
+    <string-array name="buffer_size_values">
+        <item>64000</item>item>
+        <item>128000</item>item>
+        <item>256000</item>item>
+        <item>512000</item>item>
+        <item>1024000</item>item>
+    </string-array>
+
+    <string-array name="connection_timeout">
+        <item>5 secs</item>item>
+        <item>10 secs</item>item>
+    </string-array>
+
+    <string-array name="connection_timeout_values">
+        <item>5000</item>item>
+        <item>10000</item>item>
+    </string-array>
+
+    <string-array name="equalizer_color">
+        <item>Green</item>
+        <item>Blue</item>
+        <item>Silver</item>
+        <item>Purple</item>
+    </string-array>
+
+    <string-array name="equalizer_color_values">
+        <item>#4caf50</item>item>
+        <item>#00bfff</item>item>
+        <item>#C0C0C0</item>item>
+        <item>#DDA0DD</item>item>
+    </string-array>
+
+</resources>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorWindowBackground">#000</color> //EQ window color
+    <color name="primaryColor">#ffff9431</color>
+    <color name="primaryDark">#ffD56600</color>
+    <color name="windowBackground">#ffffff</color>
+    <color name="subtitleColor">#374151</color>
+    <color name="buttonColor">#000</color>
+    <color name="textColor">#374151</color>
+    <color name="textColorPrimary">#374151</color>
+    <color name="textColorSecondary">#1F2937</color>
+    <color name="textColorTertiary">#4B5563</color>
+    <color name="separatorGray">#aaa</color>
+    <color name="searchTextColor">#1F2937</color>"
+    <color name="counterColor">#ffff9431</color>"
+    <color name="splashColor">#FB8C00</color>"
+
+
+    <color name="ringCenterColor">#FF5722</color>
+    <color name="ringEndColor">#FF5722</color>
+    <color name="ringStartColor">#FF5722</color>
+
+
+    <color name="secondaryRingColor">#808899A1</color>
+
+    <color name="about_item_text_color">@color/textColorSecondary</color>
+    <color name="about_item_dark_text_color">@color/textColorSecondary</color>
+    <color name="about_text_dark_color">@color/textColorTertiary</color>
+    <color name="about_description_dark_text_color">@color/textColorPrimary</color>
+    <color name="about_background_dark_color">@color/windowBackground</color>
+    <color name="about_item_icon_dark_color">@color/textColorPrimary</color>
+
+    <color name="EqPaintColor">#555555</color>
+
+
+
+
+
+</resources>

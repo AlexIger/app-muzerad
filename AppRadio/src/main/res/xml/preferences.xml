@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="last_played"
+        android:summary="@string/pref_last_played_summary"
+        android:title="@string/pref_last_played" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="bluetooth_media_button"
+        android:summary="@string/pref_media_button_summary"
+        android:title="@string/pref_media_button" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="station_panel_mode"
+        android:summary="@string/pref_panel_mode_summary"
+        android:title="@string/pref_panel_mode" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="day_mode"
+        android:summary="@string/pref_daynight_summary"
+        android:title="@string/pref_day_night" />
+
+    <ListPreference
+        android:defaultValue="@string/default_buffer_size_int"
+        android:entries="@array/buffer_size_items"
+        android:entryValues="@array/buffer_size_values"
+        android:key="buffer"
+        android:summary="@string/pref_buffer_summary"
+        android:title="@string/pref_buffer_size"
+        android:visibility="visible"
+        tools:visibility="visible" />
+    <ListPreference
+        android:defaultValue= "@string/default_connection_timeout_int"
+        android:entries="@array/connection_timeout"
+        android:entryValues="@array/connection_timeout_values"
+        android:key="conn_timeout"
+        android:summary="@string/pref_timeout_summary"
+        android:title="Connection timeout"
+        android:visibility="visible"
+        tools:visibility="visible" />
+
+    <ListPreference
+        android:defaultValue= "@string/default_equaliser_color_hex"
+        android:entries="@array/equalizer_color"
+        android:entryValues="@array/equalizer_color_values"
+        android:key="equalizer_color"
+        android:summary="@string/pref_equalizer_colors_summary"
+        android:title="Equalizer controls color"
+        android:visibility="visible"
+        tools:visibility="visible" />
+
+</PreferenceScreen>

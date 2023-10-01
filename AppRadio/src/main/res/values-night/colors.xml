@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorWindowBackground">#000</color>
+    <color name="primaryColor">#000</color>
+    <color name="primaryDark">#000</color>
+    <color name="windowBackground">#000</color>
+    <color name="buttonColor">#ffffff</color>
+    <color name="subtitleColor">#C5C4C4</color>
+    <color name="textColor">#ffffff</color>
+    <color name="textColorSecondary">#ffffff</color>
+    <color name="textColorTertiary">#ffffff</color>
+    <color name="separatorGray">#2C2C2C</color>
+    <color name="searchTextColor">#ffffff</color>"
+    <color name="counterColor">#B3B3B3</color>"
+    <color name="ringCenterColor">#FF5722</color>
+    <color name="ringEndColor">#FF5722</color>
+    <color name="ringStartColor">#FF5722</color>
+    <color name="secondaryRingColor">#888888</color>
+
+    <color name="about_item_dark_text_color">@color/textColorTertiary</color>
+    <color name="about_text_dark_color">@color/subtitleColor</color>
+    <color name="about_description_dark_text_color">@color/subtitleColor</color>
+    <color name="about_background_dark_color">@color/colorWindowBackground</color>
+    <color name="about_item_icon_dark_color">@color/secondaryRingColor</color>
+
+
+
+<!--    <color name="primaryColor">#191414</color>-->
+</resources>
