@@ -2,6 +2,10 @@ package com.cyberia.radio.model;
 
 
 import android.text.TextUtils;
+
+
+import com.cyberia.radio.persistent.Station;
+
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -30,7 +34,7 @@ public class StationCookie
         this.station = station;
     }
 
-    public StationCookie(com.cyberia.radio.db.Station stationDB)
+    public StationCookie(Station stationDB)
     {
         this();
         station.setName(stationDB.title);
@@ -45,7 +49,6 @@ public class StationCookie
         station.setCodec(stationDB.codec);
         station.setStationUUID(UUID.fromString(stationDB.uuid));
     }
-
 
     //----------------------------- Fav Icon---------------------//
     public String getThumbUrl()
@@ -131,7 +134,7 @@ public class StationCookie
     }
 
     //----------------------------- uuid---------------------//
-    public String getUuid()
+    public String  getUuid()
     {
         return TextUtils.isEmpty(
                 station.getStationUUID().toString()) ? NOT_AVAIL_STRING : station.getStationUUID().toString();

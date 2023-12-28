@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.cyberia.radio"
+    xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto"
-    android:versionCode="609"
-    android:versionName="6.9">
+    android:versionCode="720"
+    android:versionName="7.2">
 
     <application
         android:name="AppRadio"
@@ -11,8 +11,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:theme="@style/Theme.AppSplash"
         android:supportsRtl="true"
+        android:theme="@style/Theme.AppSplash"
         android:usesCleartextTraffic="true">
 
         <activity
@@ -22,30 +22,25 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <tools:validation testUrl="https://muze-radio.tiiny.site" />
 
             <intent-filter
                 android:autoVerify="true"
-                android:label="muze_radio_link">
+                android:label="muzeradio_link">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:scheme="https" 
-                    android:host="muze-radio.tiiny.site"
-                    android:pathPattern="/*" />
-
-<!--                <data-->
-<!--                    android:host="open.muzeradio"-->
-<!--                    android:path="/station" />-->
-
-
-
+                <data android:scheme="https" />
+                <data android:host="muze-radio.tiiny.site"/>
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
 
         </activity>
 

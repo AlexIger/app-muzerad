@@ -11,7 +11,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Looper;
 import android.os.PowerManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,16 +24,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
-import androidx.core.splashscreen.SplashScreen;
-import androidx.preference.PreferenceManager;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 
 import com.cyberia.radio.about.AboutFragment;
 import com.cyberia.radio.bylanguage.LanguageFragment;
@@ -43,7 +41,6 @@ import com.cyberia.radio.country.CountriesFragment;
 import com.cyberia.radio.equalizer.EqualizerManager;
 import com.cyberia.radio.equalizer.EqualizerSettings;
 import com.cyberia.radio.eventbus.Events;
-import com.cyberia.radio.favorites.FavoritesManager;
 import com.cyberia.radio.favorites.FavsFragment;
 import com.cyberia.radio.genres.GenreFragment;
 import com.cyberia.radio.global.MyHandler;
@@ -51,23 +48,26 @@ import com.cyberia.radio.global.MyThreadPool;
 import com.cyberia.radio.helpers.ExceptionHandler;
 import com.cyberia.radio.helpers.MyPrint;
 import com.cyberia.radio.history.HistoryFragment;
-import com.cyberia.radio.history.HistoryManager;
+//import com.cyberia.radio.history.HistoryManager;
 import com.cyberia.radio.home.HomeFragment;
 import com.cyberia.radio.interfaces.Controller;
 import com.cyberia.radio.io.ConnectionClient;
 import com.cyberia.radio.io.CoverArtClient;
 import com.cyberia.radio.io.ServerLookup;
 import com.cyberia.radio.model.StationCookie;
+import com.cyberia.radio.persistent.Repository;
 import com.cyberia.radio.player.PlaybackManager;
 import com.cyberia.radio.player.PlaybackNotifier;
+import com.cyberia.radio.playlist.PlaylistFragment;
+//import com.cyberia.radio.playlist.PlaylistManager;
 import com.cyberia.radio.radiodetails.RadioDetailFragment;
 import com.cyberia.radio.search.SearchFragment;
 import com.cyberia.radio.settings.PrefsFragment;
-import com.cyberia.radio.stations.StationsFragment;
-import com.cyberia.radio.utils.StringCapitalizer;
 import com.cyberia.radio.slidingpanel.SlidingUpPanelLayout;
 import com.cyberia.radio.slidingpanel.SlidingUpPanelLayout.PanelSlideListener;
 import com.cyberia.radio.slidingpanel.SlidingUpPanelLayout.PanelState;
+import com.cyberia.radio.stations.StationsFragment;
+import com.cyberia.radio.utils.StringCapitalizer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -76,14 +76,13 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 
 public class MainActivity extends AppCompatActivity implements Controller
 {
     private static final String HOME = "frag_home";
-    private static final String FAVS = "frag_favs";
+    private static final String FAVORITES = "frag_favs";
+    private static final String PLAYLIST = "frag_playlist";
     private static final String STATION = "frag_station";
     private static final String GENRE = "frag_genre";
     private static final String PREFS = "frag_prefs";
@@ -130,8 +129,6 @@ public class MainActivity extends AppCompatActivity implements Controller
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        MyPrint.printOut("Main", "onCreate");
-
         super.onCreate(savedInstanceState);
 
         SplashScreen.installSplashScreen(this);
@@ -224,7 +221,8 @@ public class MainActivity extends AppCompatActivity implements Controller
         addHomeScreenFragment();
         playbackManager = new PlaybackManager(MainActivity.this);
 
-        HistoryManager.initHistory();
+//        HistoryManager.initHistory();
+//        PlaylistManager.initPlaylist();
 
         // Create wakelock
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -237,25 +235,19 @@ public class MainActivity extends AppCompatActivity implements Controller
 
         initBroadcastReceiver();
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-
-        if (!Objects.isNull(getIntent()))
-        {
-            handleSharedStation(getIntent().getParcelableExtra(Intent.EXTRA_INTENT));
-        }
+        handleSharedStation(getIntent());
     }
 
     @Override
     public void onNewIntent(Intent intent)
     {
         super.onNewIntent(intent);
+        handleSharedStation(getIntent());
 
-        if (!Objects.isNull(intent))
-        {
-            handleSharedStation(intent.getParcelableExtra(Intent.EXTRA_INTENT));
-        }
 //            Bundle bundle = intent.getExtras();
 //            if (bundle != null)
 //            {
+//                  handleSharedStation(getIntent().getParcelableExtra(Intent.EXTRA_INTENT));
 //                MyPrint.printOut("Main", "Bundle is not null, String is: " +  bundle.getString("from_notifier"));
 //            }
     }
@@ -611,14 +603,25 @@ public class MainActivity extends AppCompatActivity implements Controller
 
     private void addToFavorites()
     {
+//        MyThreadPool.INSTANCE.getExecutorService().execute(() ->
+//                FavoritesManager.getInstance()
+//                        .doAccessDB(cookieRefs.get(), FavoritesManager.Perform.INSERT));
+
+//        MyThreadPool.INSTANCE.getExecutorService().execute(() -> Repository.getInstance()
+//                        .insertFavoriteStation(cookieRefs.get()));
+
+
         MyThreadPool.INSTANCE.getExecutorService().execute(() ->
-                FavoritesManager.doAccessDB(cookieRefs.get(), FavoritesManager.Perform.INSERT));
+                Repository.getInstance().insertFavoriteStation(cookieRefs.get()));
+
     }
 
     // add to history
     private void addToRecent()
     {
-        MyThreadPool.INSTANCE.getExecutorService().execute(() -> HistoryManager.addToRecent(cookieRefs.get()));
+//        MyThreadPool.INSTANCE.getExecutorService().execute(() -> HistoryManager.addToRecent(cookieRefs.get()));
+        MyThreadPool.INSTANCE.getExecutorService().execute(() ->
+                Repository.getInstance().insertHistoryStation(cookieRefs.get()));
     }
 
 
@@ -745,6 +748,7 @@ public class MainActivity extends AppCompatActivity implements Controller
 
     //    -----------------------------------------/ Controller Methods /----------------------------------
     //displays Home screen
+    @Override
     public void addHomeScreenFragment()
     {
         Fragment homeFragment = getSupportFragmentManager().findFragmentByTag(HOME);
@@ -759,6 +763,7 @@ public class MainActivity extends AppCompatActivity implements Controller
     }
 
     //displays SubGenres screen
+    @Override
     public void addGenreScreenFragment(int selection)
     {
         Fragment frag = getSupportFragmentManager().findFragmentByTag(GENRE);
@@ -769,6 +774,7 @@ public class MainActivity extends AppCompatActivity implements Controller
     }
 
     //displays Stations screen
+    @Override
     public void addStationScreenFragment(String selection, int flag)
     {
         if (isDeviceConnected())
@@ -785,6 +791,7 @@ public class MainActivity extends AppCompatActivity implements Controller
     }
 
     //displays Stations screen for countries
+    @Override
     public void addStationScreenFragment(String selection, String countryCode, int flag)
     {
         if (isDeviceConnected())
@@ -802,13 +809,22 @@ public class MainActivity extends AppCompatActivity implements Controller
 
         replaceFragment(frag);
     }
-
-
+    @Override
     public void addFavsScreenFragment()
     {
-        Fragment frag = getSupportFragmentManager().findFragmentByTag(FAVS);
+        Fragment frag = getSupportFragmentManager().findFragmentByTag(FAVORITES);
         if (frag == null)
             frag = FavsFragment.newInstance();
+
+        replaceFragment(frag);
+    }
+
+    @Override
+    public void addPlaylistFragment()
+    {
+        Fragment frag = getSupportFragmentManager().findFragmentByTag(PLAYLIST);
+        if (frag == null)
+            frag = PlaylistFragment.newInstance();
 
         replaceFragment(frag);
     }
@@ -830,6 +846,7 @@ public class MainActivity extends AppCompatActivity implements Controller
         replaceFragment(frag);
     }
 
+    @Override
     public void addLangsFragment()
     {
         if (isDeviceConnected())
@@ -846,6 +863,7 @@ public class MainActivity extends AppCompatActivity implements Controller
         replaceFragment(frag);
     }
 
+    @Override
     public void addHistoryFragment()
     {
         Fragment frag = getSupportFragmentManager().findFragmentByTag(HISTORY);
@@ -917,6 +935,7 @@ public class MainActivity extends AppCompatActivity implements Controller
         addFragment(frag);
     }
 
+    @Override
     public void addSearchFragment()
     {
         if (isDeviceConnected())
@@ -1000,7 +1019,8 @@ public class MainActivity extends AppCompatActivity implements Controller
     {
         super.onStop();
 
-        HistoryManager.updateDB();
+      updataDatabaseOnExit();
+
         // ger Preferences object
         SharedPreferences prefs =
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -1046,6 +1066,12 @@ public class MainActivity extends AppCompatActivity implements Controller
         wifiLock.release();
 
         MyThreadPool.INSTANCE.getExecutorService().shutdown();
+    }
+
+     private synchronized void updataDatabaseOnExit()
+    {
+//        PlaylistManager.updatePlaylistDB();
+//        HistoryManager.updateHistoryDB();
     }
 
     private void notifyDeviceNotConnected()
@@ -1100,6 +1126,8 @@ public class MainActivity extends AppCompatActivity implements Controller
 
     public void handleSharedStation(Intent intent)
     {
+        MyPrint.printOut("Intent", "received");
+
         if (!Objects.isNull(intent))
         {
             Uri uri = intent.getData();
@@ -1107,6 +1135,7 @@ public class MainActivity extends AppCompatActivity implements Controller
             if (uri != null)
             {
                 String station = uri.getQueryParameter("share");
+                MyPrint.printOut("Intent address", station);
                 addStationScreenFragment(station, GenreFlags.SINGLE_STATION);
 
                 if (mLayout.getPanelState() == PanelState.EXPANDED)
@@ -1114,6 +1143,9 @@ public class MainActivity extends AppCompatActivity implements Controller
                     slidePanel(MainActivity.PANEL_SLIDE_DOWN);
                 }
             }
+        } else
+        {
+            MyPrint.printOut("Intent is", "null");
         }
     }
 

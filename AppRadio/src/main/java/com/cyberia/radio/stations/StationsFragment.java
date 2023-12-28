@@ -167,21 +167,21 @@ public class StationsFragment extends ListFragment implements MvcViewEventListen
             genre = "talk";
 
 
-        String searchFor;
+        String searchKey;
         if (flag == GenreFlags.COUNTRY)
-            searchFor = countryCode;
+            searchKey = countryCode;
         else
         {
-            searchFor = genre;
+            searchKey = genre;
         }
 
-       MyThreadPool.INSTANCE.getExecutorService().execute(() ->
+        MyThreadPool.INSTANCE.getExecutorService().execute(() ->
         {
             int listStart = stationsModel.getCount();
 
 //            if(listStart == 0) listStart++;
 
-            stationsModel.readLazy(searchFor, listStart, flag, StationsFragmentModel.DEFAULT_PAGE_SIZE);
+            stationsModel.readLazy(searchKey, listStart, flag, StationsFragmentModel.DEFAULT_PAGE_SIZE);
         });
     }
 
@@ -189,6 +189,7 @@ public class StationsFragment extends ListFragment implements MvcViewEventListen
     public void onStationsAvailable(List<Station> stationsList, int count)
     {
         cancelProgress();
+
 
         if (!CollectionUtils.isEmpty(stationsList))
         {
@@ -198,9 +199,11 @@ public class StationsFragment extends ListFragment implements MvcViewEventListen
                 list.add(new StationCookie(station));
 
             stationsFragmentView.showStations(list);
-        } else if (CollectionUtils.isEmpty(stationsList) && count < 1)
+        } else
         {
-            MyHandler.post(() -> Toast.makeText(requireActivity(), "Stations not found.", Toast.LENGTH_LONG).show());
+            if (count < 1)
+                MyHandler.post(() -> Toast.makeText(requireActivity(),
+                        "Stations not found.", Toast.LENGTH_LONG).show());
         }
     }
 

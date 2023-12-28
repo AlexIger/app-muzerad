@@ -1,25 +1,20 @@
-package com.cyberia.radio.db;
+package com.cyberia.radio.persistent;
 
-
-import android.text.TextUtils;
-
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-import com.cyberia.radio.helpers.ExceptionHandler;
 import com.cyberia.radio.model.StationCookie;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 
-
-@Entity
+@Entity (tableName = "station", indices = {@Index(value = "UUID", unique = true)})
 public class Station
 {
     @PrimaryKey(autoGenerate = true)
+    @NonNull
     public int id_station;
 
     @ColumnInfo(name = "title")
@@ -58,13 +53,16 @@ public class Station
     @ColumnInfo(name = "category")
     public String category;
 
+    @ColumnInfo(name = "playlist")
+    public boolean isPlayList;
 
-    public Station(){}
 
-    final static String TAG = "Station";
+    public Station()
+    {
+    }
 
     @Ignore
-    public Station (StationCookie station)
+    public Station(StationCookie station)
     {
         this.title = station.getTitle();
         this.url = station.getUrl();
@@ -80,95 +78,51 @@ public class Station
     }
 
     @Ignore
-    public Station (StationCookie station, String category)
+    public Station(StationCookie station, String category)
     {
         this(station);
         this.category = category;
     }
 
     @Ignore
-    public Station (String title)
+    public Station(String title)
     {
         this.title = title;
     }
 
+    @Ignore
     public String getTitle()
     {
         return title;
     }
 
+    @Ignore
     public String getGenre()
     {
         return genre;
     }
 
+    @Ignore
     public String getUrl()
     {
         return url;
     }
 
-    public String getUrlRes()
-    {
-        return urlRes;
-    }
-
+    @Ignore
     public String getThumbUrl()
     {
-        if (TextUtils.isEmpty(thumbUrl))
-        {
-            return null;
-        } else
-        {
-            return checkUrlValidity(thumbUrl);
-        }
+        return thumbUrl;
     }
-
-    private String checkUrlValidity(String urlString)
-    {
-        try
-        {
-            URL url = new URL(urlString);
-            url.toURI();
-        }
-        catch (URISyntaxException | MalformedURLException e)
-        {
-            ExceptionHandler.onException(TAG, e);
-            return null;
-        }
-
-        return urlString.toLowerCase();
-    }
-
+    @Ignore
     public String getCountry()
     {
         return country;
     }
 
-    public String getUuid()
+    public int getStationID()
     {
-        return uuid;
+        return id_station;
     }
-
-    public String getLanguage()
-    {
-        return language;
-    }
-
-    public int getBitrate()
-    {
-        return bitrate;
-    }
-
-    public String getCodec()
-    {
-        return codec;
-    }
-
-    public String getHomepage()
-    {
-        return homepage;
-    }
-
 
 }
 

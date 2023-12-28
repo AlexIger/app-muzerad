@@ -59,6 +59,7 @@ public class StationsFragmentModel
 
             if (what == GenreFlags.SINGLE_STATION)
             {
+                MyPrint.printOut(TAG, "Single station");
                 readSingleStation(searchKey, listOfStations);
             } else if (what == GenreFlags.TREND)
             {
@@ -91,11 +92,13 @@ public class StationsFragmentModel
     {
         UUID uuid = UUID.fromString(searchKey);
         Optional<Station> station = browser.getStationByUUID(uuid);
-
+        List<Station> stationList = new ArrayList<>();
         if (station.isPresent())
-            listOfStations.add(station.get());
-
-        display(listOfStations);
+        {
+            stationList.add(station.get());
+            count.set(1);
+        }
+        display(stationList);
     }
 
     public void loadStations(List<Station> batch)

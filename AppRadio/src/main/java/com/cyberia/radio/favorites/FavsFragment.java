@@ -1,6 +1,7 @@
 package com.cyberia.radio.favorites;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -14,17 +15,22 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.ListFragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import com.cyberia.radio.R;
 import com.cyberia.radio.constant.GenreFlags;
-import com.cyberia.radio.db.Station;
+import com.cyberia.radio.persistent.Station;
+import com.cyberia.radio.persistent.Repository;
 import com.cyberia.radio.global.MyAppContext;
-import com.cyberia.radio.global.MyHandler;
 import com.cyberia.radio.global.MyThreadPool;
 import com.cyberia.radio.helpers.ExceptionHandler;
+import com.cyberia.radio.helpers.MyPrint;
 import com.cyberia.radio.interfaces.Controller;
 import com.cyberia.radio.interfaces.MvcViewEventListener;
 import com.cyberia.radio.model.StationCookie;
+//import com.cyberia.radio.playlist.PlaylistManager;
 import com.google.android.gms.common.util.CollectionUtils;
 
 import java.util.List;
@@ -34,10 +40,9 @@ import java.util.Objects;
 public class FavsFragment extends ListFragment implements MvcViewEventListener
 {
     private FavsFragmentView favsFragmentView;
-    private FavsFragmentModel model;
     private Controller controller;
     private volatile ProgressBar progress;
-    private volatile List<Station> list;
+    private List<Station> list;
 
 
     public static FavsFragment newInstance()
@@ -62,7 +67,11 @@ public class FavsFragment extends ListFragment implements MvcViewEventListener
 
                 rootView = favsFragmentView.getRootView();
                 progress = rootView.findViewById(R.id.progressStations);
-            } catch (Exception e)
+
+
+
+            }
+            catch (Exception e)
             {
                 ExceptionHandler.onException(getClass().getSimpleName(), e);
             }
@@ -77,25 +86,35 @@ public class FavsFragment extends ListFragment implements MvcViewEventListener
     public void onViewCreated(@NonNull View view, Bundle hashMap)
     {
         controller.updateAppBarTitle(GenreFlags.CAT_FAVS, null, true);
-        getAllFromFavorites();
+//        getAllFromFavorites();
         registerForContextMenu(getListView());
+        observeData();
 
         super.onViewCreated(view, hashMap);
     }
 
     private void getAllFromFavorites()
     {
-        MyThreadPool.INSTANCE.getExecutorService().execute(() -> {
-            list = FavsFragmentModel.getFavorites();
+        MyThreadPool.INSTANCE.getExecutorService().execute(() ->
+        {
+//            list = FavsFragmentModel.getFavorites();
             cancelProgress();
 
             if (CollectionUtils.isEmpty(list))
             {
-//                        MyPrint.printOut("FavoritesFragment", "List is null");
+                //              MyPrint.printOut("FavoritesFragment", "List is null");
                 list.add(new Station(getString(R.string.empty_list)));
             }
-//                    MyPrint.printOut("FavoritesFragment", "Showing Favorites");
-            favsFragmentView.showFavs(list);
+            //                    MyPrint.printOut("FavoritesFragment", "Showing Favorites");
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+            boolean isFavoritesSorted = prefs.getBoolean("sort_favorites", false);
+
+            if (isFavoritesSorted)
+            {
+                list.sort((station1, station2) -> station1.getTitle().compareToIgnoreCase(station2.getTitle()));
+            }
+
+//            favsFragmentView.showView(list);
         });
     }
 
@@ -105,14 +124,13 @@ public class FavsFragment extends ListFragment implements MvcViewEventListener
         super.onCreateContextMenu(menu, v, menuInfo);
 
         requireActivity().getMenuInflater().inflate(R.menu.menu_context_favorites, menu);
-//        menu.setHeaderTitle("Options");
+        //        menu.setHeaderTitle("Options");
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item)
     {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
         Station station = (Station) Objects.requireNonNull(getListAdapter()).getItem(Objects.requireNonNull(info).position);
 
         if (checkIfEmpty(station))
@@ -123,34 +141,34 @@ public class FavsFragment extends ListFragment implements MvcViewEventListener
         if (item.getItemId() == R.id.menu_station_play)
         {
             MyThreadPool.INSTANCE.getExecutorService().execute(() -> controller.onStationInfoAvailable(cookie));
-        } else if (item.getItemId() == R.id.menu_remove)
+        }
+        else if (item.getItemId() == R.id.menu_remove)
         {
             MyThreadPool.INSTANCE.getExecutorService().execute(() ->
             {
-                MyHandler.getHandler().post(() ->
-                {
-                    FavsFragmentView.FavsListAdapter adapter =
-                            (FavsFragmentView.FavsListAdapter) getListAdapter();
-                    Objects.requireNonNull(adapter).remove(info.position);
-                });
-
-                FavsFragmentModel.deleteFavorite(cookie);
+                FavsFragmentModel model = new ViewModelProvider(this).get(FavsFragmentModel.class);
+                model.deleteFavorite(station);
             });
 
-        } else if (item.getItemId() == R.id.menu_clear_history)
+        }
+        else if (item.getItemId() == R.id.menu_clear_history)
         {
             MyThreadPool.INSTANCE.getExecutorService().execute(() ->
             {
-                MyHandler.getHandler().post(() ->
-                {
-                    FavsFragmentView.FavsListAdapter adapter = (FavsFragmentView.FavsListAdapter) getListAdapter();
-                    adapter.removeAll();
-                });
-
-                FavsFragmentModel.clearFavorites();
+                FavsFragmentModel model = new ViewModelProvider(this).get(FavsFragmentModel.class);
+                model.deleteAllFavorites();
             });
+
             Toast.makeText(getActivity(), "Cleared all", Toast.LENGTH_SHORT).show();
-        } else
+        }
+        else if (item.getItemId() == R.id.menu_add_to_playlist)
+        {
+            MyThreadPool.INSTANCE.getExecutorService().execute(() ->
+                    Repository.getInstance().insertPlaylistStation(cookie));
+
+            Toast.makeText(getActivity(), "Added to playlist", Toast.LENGTH_SHORT).show();
+        }
+        else
         {
             return false;
         }
@@ -163,10 +181,11 @@ public class FavsFragment extends ListFragment implements MvcViewEventListener
     public void onListItemClick(@NonNull ListView listView, @NonNull View view, int position, long id)
     {
         final Station station = (Station) getListView().getItemAtPosition(position);
-        if (checkIfEmpty(station)) return;
-        if (checkIfEmpty(station)) return;
+        if (checkIfEmpty(station))
+            return;
 
-        MyThreadPool.INSTANCE.getExecutorService().execute(() -> {
+        MyThreadPool.INSTANCE.getExecutorService().execute(() ->
+        {
             if (station != null)
             {
                 StationCookie cookie = new StationCookie(station);
@@ -177,7 +196,8 @@ public class FavsFragment extends ListFragment implements MvcViewEventListener
 
     void cancelProgress()
     {
-        requireActivity().runOnUiThread(() -> {
+        requireActivity().runOnUiThread(() ->
+        {
             if (progress != null)
             {
                 progress.setVisibility(ProgressBar.GONE);
@@ -202,7 +222,8 @@ public class FavsFragment extends ListFragment implements MvcViewEventListener
         if (context instanceof Controller)
         {
             controller = (Controller) context;
-        } else
+        }
+        else
         {
             throw new RuntimeException(context
                     + " must implement OnFragmentInteractionListener");
@@ -247,5 +268,27 @@ public class FavsFragment extends ListFragment implements MvcViewEventListener
     @Override
     public void onViewEvent(String s)
     {
+    }
+
+    public void observeData()
+    {
+        FavsFragmentModel model = new ViewModelProvider(this).get(FavsFragmentModel.class);
+
+        model.getAll().observe(getViewLifecycleOwner(), new Observer<List<Station>>()
+        {
+            @Override
+            public void onChanged(List<Station> stations)
+            {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                boolean isFavoritesSorted = prefs.getBoolean("sort_favorites", false);
+
+                if (CollectionUtils.isEmpty(stations)) stations.add(new Station(getString(R.string.empty_list)));
+
+                if (isFavoritesSorted)
+                    stations.sort((station1, station2) -> station1.getTitle().compareToIgnoreCase(station2.getTitle()));
+
+                favsFragmentView.showView(stations);
+            }
+        });
     }
 }

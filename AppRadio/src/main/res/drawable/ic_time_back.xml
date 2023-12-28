@@ -7,7 +7,7 @@
                 android:startX="275.9495" android:startY="-5.32923" android:type="linear">
                 <item android:color="#FFFFF33B" android:offset="0"/>
                 <item android:color="#FFFEE72E" android:offset="0.04"/>
-                <item android:color="#FFFED51B" android:offset="0.117"/>
+                <item android:color="#FFC107" android:offset="0.117"/>
                 <item android:color="#FFFDCA10" android:offset="0.196"/>
                 <item android:color="#FFFDC70C" android:offset="0.281"/>
                 <item android:color="#FFF3903F" android:offset="0.669"/>

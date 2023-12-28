@@ -9,6 +9,7 @@ public interface Controller
     void addStationScreenFragment (String search, int what);
     void addStationScreenFragment (String search, String name, int what);
     void addCountriesScreenFragment();
+    void addPlaylistFragment();
     void addLangsFragment();
     void addHistoryFragment();
     void addFavsScreenFragment();

@@ -26,14 +26,16 @@ public class HomeFragmentView implements MvcView
 
     static final Integer[] imgID =
             {
-                R.drawable.ic_star,
-                R.drawable.ic_cat_trending,
-                R.drawable.ic_cat_music,
-                R.drawable.ic_cat_talk_1,
-                R.drawable.ic_cat_bycountry,
-                R.drawable.ic_lang_5,
-                R.drawable.ic_time_back,
-                R.drawable.ic_magnifying_glass
+                    R.drawable.ic_favorites,
+                    R.drawable.ic_cat_trending,
+                    R.drawable.ic_cat_music,
+                    R.drawable.ic_cat_talk_1,
+                    R.drawable.ic_cat_bycountry,
+                    R.drawable.ic_lang_5,
+                    R.drawable.ic_time_back,
+                    R.drawable.ic_magnifying_glass,
+                    R.drawable.ic_staiton_playlist
+
             };
 
 
@@ -43,7 +45,7 @@ public class HomeFragmentView implements MvcView
         presenter.setListAdapter(new HomeFragmentAdapter
                 (presenter.getContext(), inflater, GenreFlags.RadioCategories, imgID));
 
-//        presenter.setListAdapter(new HomeFragmentAdapter(presenter.getContext(), inflater, StationCategory.RadioCategories, imgID));
+        //        presenter.setListAdapter(new HomeFragmentAdapter(presenter.getContext(), inflater, StationCategory.RadioCategories, imgID));
         rootView = inflater.inflate(R.layout.fragment_home, _container, false);
     }
 
@@ -95,6 +97,7 @@ public class HomeFragmentView implements MvcView
 
             txtTitle.setText(itemName[position]);
             imageView.setImageResource(imgID[position]);
+            rowField.setTag(itemName[position]);
 
             return rowField;
         }

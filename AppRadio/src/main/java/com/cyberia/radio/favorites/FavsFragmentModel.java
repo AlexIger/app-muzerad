@@ -1,26 +1,38 @@
 package com.cyberia.radio.favorites;
 
-import com.cyberia.radio.db.Station;
-import com.cyberia.radio.model.StationCookie;
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import com.cyberia.radio.persistent.Station;
+import com.cyberia.radio.persistent.Repository;
 
 import java.util.List;
 
-public class FavsFragmentModel
+public class FavsFragmentModel extends AndroidViewModel
 {
+    private Repository repo;
 
-    static List<Station> getFavorites()
+    public FavsFragmentModel(@NonNull Application application)
     {
-        return FavoritesManager.getFavorites();
+        super(application);
+        repo = Repository.getInstance();
     }
 
-    static void deleteFavorite(StationCookie cookie)
+    public LiveData<List<com.cyberia.radio.persistent.Station>> getAll()
     {
-        FavoritesManager.doAccessDB(cookie, FavoritesManager.Perform.DELETE_SELECTED);
+        return repo.getFavLiveData();
     }
 
-    static void clearFavorites()
+    public void deleteFavorite(Station station)
     {
-        FavoritesManager.doAccessDB(null, FavoritesManager.Perform.DELETE_ALL);
+        repo.deleteSingleFavorites(station);
+    }
+
+    public void deleteAllFavorites()
+    {
+        repo.deleteAllFavorites();
     }
 }
 

@@ -20,7 +20,9 @@ public class HomeFragment extends ListFragment implements MvcViewEventListener
     private HomeFragmentView homeFragmentView;
     private Controller controller;
 
-    public HomeFragment(){}
+    public HomeFragment()
+    {
+    }
 
     public static HomeFragment newInstance()
     {
@@ -50,14 +52,15 @@ public class HomeFragment extends ListFragment implements MvcViewEventListener
     @Override
     public void onListItemClick(@NonNull ListView listView, @NonNull View view, int position, long id)
     {
-        switch (position)
+        switch ((String)view.getTag())
         {
-            case GenreFlags.FAVS -> controller.addFavsScreenFragment();
-            case GenreFlags.TREND -> controller.addStationScreenFragment(GenreFlags.CAT_TREND, GenreFlags.TREND);
-            case GenreFlags.COUNTRY -> controller.addCountriesScreenFragment();
-            case GenreFlags.LANGUAGE -> controller.addLangsFragment();
-            case GenreFlags.RECENT -> controller.addHistoryFragment();
-            case GenreFlags.SEARCH -> controller.addSearchFragment();
+            case GenreFlags.CAT_FAVS -> controller.addFavsScreenFragment();
+            case GenreFlags.CAT_TREND -> controller.addStationScreenFragment(GenreFlags.CAT_TREND, GenreFlags.TREND);
+            case GenreFlags.CAT_BYCOUNTRY -> controller.addCountriesScreenFragment();
+            case GenreFlags.CAT_BYLANG -> controller.addLangsFragment();
+            case GenreFlags.CAT_RECENT -> controller.addHistoryFragment();
+            case GenreFlags.CAT_PLAYLIST -> controller.addPlaylistFragment();
+            case GenreFlags.CAT_SEARCH -> controller.addSearchFragment();
             default -> controller.addGenreScreenFragment(position);
         }
     }
@@ -76,7 +79,8 @@ public class HomeFragment extends ListFragment implements MvcViewEventListener
         if (context instanceof Controller)
         {
             controller = (Controller) context;
-        } else
+        }
+        else
         {
             throw new RuntimeException(context + " must implement OnFragmentInteractionListener");
         }

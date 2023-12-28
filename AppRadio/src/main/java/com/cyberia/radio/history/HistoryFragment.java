@@ -10,22 +10,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.ListFragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.cyberia.radio.R;
 import com.cyberia.radio.constant.GenreFlags;
+import com.cyberia.radio.persistent.Station;
 import com.cyberia.radio.global.MyAppContext;
-import com.cyberia.radio.global.MyHandler;
 import com.cyberia.radio.global.MyThreadPool;
 import com.cyberia.radio.helpers.ExceptionHandler;
 import com.cyberia.radio.helpers.MyPrint;
 import com.cyberia.radio.interfaces.Controller;
 import com.cyberia.radio.interfaces.MvcViewEventListener;
 import com.cyberia.radio.model.StationCookie;
+import com.google.android.gms.common.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -36,9 +38,8 @@ public class HistoryFragment extends ListFragment implements MvcViewEventListene
     public final String HISTORY_CLEARED = "Cleared all";
     private HistoryFragmentView historyFragmentView;
     private Controller controller;
-    private volatile ProgressBar progress;
     private Parcelable state;
-    private volatile List<StationCookie> list;
+
 
 
     public static HistoryFragment newInstance()
@@ -48,12 +49,12 @@ public class HistoryFragment extends ListFragment implements MvcViewEventListene
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState)
+            ViewGroup container,
+            Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
 
-        View rootView;
+        View rootView = null;
 
         if (historyFragmentView == null)
         {
@@ -63,14 +64,12 @@ public class HistoryFragment extends ListFragment implements MvcViewEventListene
                 historyFragmentView.setListener(this);
 
                 rootView = historyFragmentView.getRootView();
-                progress = rootView.findViewById(R.id.progressStations);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 ExceptionHandler.onException(getClass().getSimpleName(), e);
             }
         }
-
-        rootView = historyFragmentView.getRootView();
 
         return rootView;
     }
@@ -79,8 +78,8 @@ public class HistoryFragment extends ListFragment implements MvcViewEventListene
     public void onViewCreated(@NonNull View view, Bundle hashMap)
     {
         controller.updateAppBarTitle(GenreFlags.CAT_RECENT, null, true);
-        displayHistory();
         registerForContextMenu(getListView());
+        observeData();
 
         super.onViewCreated(view, hashMap);
     }
@@ -97,41 +96,36 @@ public class HistoryFragment extends ListFragment implements MvcViewEventListene
     public boolean onContextItemSelected(MenuItem item)
     {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        StationCookie cookie = (StationCookie) Objects.requireNonNull(getListAdapter()).getItem(info.position);
+        Station station = (Station) Objects.requireNonNull(getListAdapter()).getItem(info.position);
 
-        if (checkIfEmpty(cookie))
+        if (checkIfEmpty(station))
             return true;
 
         if (item.getItemId() == R.id.menu_station_play)
         {
-            MyThreadPool.INSTANCE.getExecutorService().execute(() -> controller.onStationInfoAvailable(cookie));
+            MyThreadPool.INSTANCE.getExecutorService().execute(() ->
+                    controller.onStationInfoAvailable(new StationCookie(station)));
 
-        } else if (item.getItemId() == R.id.menu_remove)
+        }
+        else if (item.getItemId() == R.id.menu_remove)
         {
-            MyHandler.getHandler().post(() -> {
-                HistoryFragmentView.HistoryListAdapter adapter =
-                        (HistoryFragmentView.HistoryListAdapter) getListAdapter();
-
-                if (adapter != null)
-                    adapter.remove(info.position);
+            MyThreadPool.INSTANCE.getExecutorService().execute(() ->
+            {
+                HistoryModel model = new ViewModelProvider(this).get(HistoryModel.class);
+                model.deleteHistoryStation(station);
             });
-
-            MyThreadPool.INSTANCE.getExecutorService().execute(() -> HistoryFragmentModel.updateHistoryList(info.position));
-
-        } else if (item.getItemId() == R.id.menu_clear_history)
+        }
+        else if (item.getItemId() == R.id.menu_clear_history)
         {
-            MyHandler.getHandler().post(() -> {
-                HistoryFragmentView.HistoryListAdapter adapter =
-                        (HistoryFragmentView.HistoryListAdapter) getListAdapter();
+            MyThreadPool.INSTANCE.getExecutorService().execute(() ->
+            {
+                HistoryModel model = new ViewModelProvider(this).get(HistoryModel.class);
+                model.deleteAllHistoryStations();
 
-                if (adapter != null)
-                    adapter.removeAll();
-
-                HistoryManager.clearAll();
             });
-
             Toast.makeText(getActivity(), HISTORY_CLEARED, Toast.LENGTH_LONG).show();
-        } else
+        }
+        else
         {
             return false;
         }
@@ -139,41 +133,20 @@ public class HistoryFragment extends ListFragment implements MvcViewEventListene
         return true;
     }
 
-    private void displayHistory()
-    {
-        if (list != null) return;
-
-        MyThreadPool.INSTANCE.getExecutorService().execute(() -> {
-            list = HistoryFragmentModel.getAllHistory();
-            cancelProgress();
-
-            if (list == null || list.size() < 1)
-                list.add(new StationCookie(getString(R.string.empty_list)));
-
-            historyFragmentView.showHistory(list);
-        });
-    }
 
     @Override
     public void onListItemClick(@NonNull ListView listView, @NonNull View view, int position, long id)
     {
-        StationCookie station = (StationCookie) getListView().getItemAtPosition(position);
-        if (checkIfEmpty(station)) return;
+        Station station = (Station) getListView().getItemAtPosition(position);
+        if (checkIfEmpty(station))
+            return;
 
-        MyThreadPool.INSTANCE.getExecutorService().execute(() -> controller.onStationInfoAvailable(station));
+        MyThreadPool.INSTANCE.getExecutorService().execute(() ->
+                controller.onStationInfoAvailable(new StationCookie(station)));
     }
 
-    void cancelProgress()
-    {
-        MyHandler.getHandler().post(() -> {
-            if (progress != null)
-            {
-                progress.setVisibility(ProgressBar.GONE);
-            }
-        });
-    }
 
-    private boolean checkIfEmpty(StationCookie entry)
+    private boolean checkIfEmpty(Station entry)
     {
         if (entry == null || "empty".equalsIgnoreCase(entry.getTitle()))
         {
@@ -192,7 +165,8 @@ public class HistoryFragment extends ListFragment implements MvcViewEventListene
         if (context instanceof Controller)
         {
             controller = (Controller) context;
-        } else
+        }
+        else
         {
             throw new RuntimeException(context
                     + " must implement OnFragmentInteractionListener");
@@ -203,7 +177,6 @@ public class HistoryFragment extends ListFragment implements MvcViewEventListene
     public void onDetach()
     {
         super.onDetach();
-
     }
 
     @Override
@@ -228,7 +201,6 @@ public class HistoryFragment extends ListFragment implements MvcViewEventListene
         state = getListView().onSaveInstanceState();
     }
 
-
     @Override
     public void onResume()
     {
@@ -243,5 +215,20 @@ public class HistoryFragment extends ListFragment implements MvcViewEventListene
     @Override
     public void onViewEvent(String s)
     {
+    }
+
+    public void observeData()
+    {
+        HistoryModel model = new ViewModelProvider(this).get(HistoryModel.class);
+        model.getAllHistoryStations().observe(getViewLifecycleOwner(), new Observer<List<Station>>()
+        {
+            @Override
+            public void onChanged(List<Station> station)
+            {
+                if (CollectionUtils.isEmpty(station)) station.add(new Station(getString(R.string.empty_list)));
+
+                historyFragmentView.showHistory(station);
+            }
+        });
     }
 }

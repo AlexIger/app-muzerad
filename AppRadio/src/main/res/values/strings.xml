@@ -25,12 +25,14 @@
 
     <!-- Settings strings-->
 
+    <string name="pref_sort_favs">Favorites</string>
     <string name="pref_last_played">Last played</string>
     <string name="pref_buffer_size">Playback buffer</string>
     <string name="pref_media_button">Headset support</string>
     <string name="pref_day_night">Dark mode</string>
     <string name="pref_panel_mode">Station screen</string>
 
+    <string name="pref_sort_favorites_summary">Sort favorites (a-z)</string>
     <string name="pref_media_button_summary">Enable bluetooth media button</string>
     <string name="pref_last_played_summary">Remember the last station played</string>
     <string name="pref_buffer_summary">Set playback buffer</string>

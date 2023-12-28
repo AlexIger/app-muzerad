@@ -1,33 +1,48 @@
 package com.cyberia.radio.test;
 
-import com.cyberia.radio.constant.GenreFlags;
+import android.content.Context;
 
+import androidx.room.Room;
+import androidx.test.core.app.ApplicationProvider;
+
+import com.cyberia.radio.helpers.MyPrint;
+import com.cyberia.radio.persistent.MuzeDatabase;
+import com.cyberia.radio.persistent.StationDao;
+
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.Test;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.Before;
+import org.junit.jupiter.api.Test;
 
-import java.util.logging.Logger;
+import java.io.IOException;
+
 
 public class MyTest
 {
-    @Test
-    @DisplayName("Test Enum RadioCats")
-    public void testArray()
+    private StationDao stationDao;
+    private MuzeDatabase db;
+
+    @Before
+    public void createDb()
     {
-        Logger log = Logger.getAnonymousLogger();
+        Context context = ApplicationProvider.getApplicationContext();
+        db = Room.inMemoryDatabaseBuilder(context, MuzeDatabase.class).build();
+        stationDao = db.stationDao();
+    }
 
-//        StationCategory.RadioCats[] values = StationCategory.RadioCats.values();
-//        Assert.assertEquals(9, values.length);
+    @After
+    public void closeDb() throws IOException
+    {
+        db.close();
+    }
 
-//        int length = GenreFlags.RadioCats.toArray().length;
-//
-//        String[] values = GenreFlags.RadioCats.CastToArray();
-//
-//        for (String element : values)
-//        {
-//            log.info("test " + element);
-//        }
+    @Test
+    public void writeUserAndReadInList()
+    {
 
-//        Assert.assertEquals(9, length);
+        MyPrint.printOut("test", "DB");
+
+        Assert.assertEquals(101, 100);
+
     }
 }

@@ -10,13 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.ListFragment;
 
 import com.cyberia.radio.AppRadio;
 import com.cyberia.radio.R;
+import com.cyberia.radio.persistent.Station;
 import com.cyberia.radio.global.MyHandler;
 import com.cyberia.radio.interfaces.MvcView;
 import com.cyberia.radio.interfaces.MvcViewEventListener;
-import com.cyberia.radio.model.StationCookie;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -26,12 +27,11 @@ public class HistoryFragmentView implements MvcView
     private final View rootView;
     private MvcViewEventListener listener;
     private final LayoutInflater inflater;
-    public HistoryFragment presenter;
+    public ListFragment presenter;
     private final Context context;
-//    private volatile HistoryListAdapter adapter;
 
     //public constructor
-    public HistoryFragmentView(HistoryFragment _presenter, LayoutInflater _inflater,
+    public HistoryFragmentView(ListFragment _presenter, LayoutInflater _inflater,
                                ViewGroup container, Context _context)
     {
         presenter = _presenter;
@@ -41,9 +41,9 @@ public class HistoryFragmentView implements MvcView
         rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
     }
 
-    public void showHistory(final List<StationCookie> list)
+    public void showHistory(final List<Station> list)
     {
-        HistoryListAdapter adapter = new HistoryListAdapter(context, R.layout.row_station, list);
+       ViewListAdapter adapter = new ViewListAdapter(context, R.layout.row_station, list);
         presenter.requireActivity().runOnUiThread(() -> presenter.setListAdapter(adapter));
     }
 
@@ -72,7 +72,7 @@ public class HistoryFragmentView implements MvcView
 
 
     //-----------------------------------/ Custom list adapter inner class /----------------------------
-    class HistoryListAdapter extends ArrayAdapter<StationCookie>
+   public class ViewListAdapter extends ArrayAdapter<Station>
     {
         class ViewHolder
         {
@@ -82,10 +82,10 @@ public class HistoryFragmentView implements MvcView
 
         private ViewHolder viewHolder;
         private final int layout;
-        private final List<StationCookie> listHistory;
+        private final List<Station> listHistory;
 
 
-        public HistoryListAdapter(Context context, int resource, List<StationCookie> listHistory)
+        public ViewListAdapter(Context context, int resource, List<Station> listHistory)
         {
             super(context, resource, listHistory);
             layout = resource;
@@ -124,7 +124,7 @@ public class HistoryFragmentView implements MvcView
             }
                 viewHolder = (ViewHolder) convertView.getTag();
 
-            StationCookie station = getItem(position);
+            Station station = getItem(position);
             String imgUrl = station.getThumbUrl();
             String title = station.getTitle();
 

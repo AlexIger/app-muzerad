@@ -10,10 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.ListFragment;
 
 import com.cyberia.radio.AppRadio;
 import com.cyberia.radio.R;
-import com.cyberia.radio.db.Station;
+import com.cyberia.radio.persistent.Station;
 import com.cyberia.radio.global.MyHandler;
 import com.cyberia.radio.interfaces.MvcView;
 import com.cyberia.radio.interfaces.MvcViewEventListener;
@@ -27,12 +28,12 @@ public class FavsFragmentView implements MvcView
     private final View rootView;
     private MvcViewEventListener listener;
     private final LayoutInflater inflater;
-    public FavsFragment presenter;
-    private final Context context;
+    public ListFragment presenter;
+    public final Context context;
 
 
     //public constructor
-    public FavsFragmentView(FavsFragment _presenter, LayoutInflater _inflater,
+    public FavsFragmentView(ListFragment _presenter, LayoutInflater _inflater,
                             ViewGroup _container, Context _context)
     {
         presenter = _presenter;
@@ -42,9 +43,9 @@ public class FavsFragmentView implements MvcView
         rootView = inflater.inflate(R.layout.fragment_favorites, _container, false);
     }
 
-    public void showFavs(final List<Station> list)
+    public void showView(final List<Station> list)
     {
-        FavsListAdapter adapter = new FavsListAdapter(context, R.layout.row_main, list);
+        ViewListAdapter adapter = new ViewListAdapter(context, R.layout.row_main, list);
 
         presenter.requireActivity().runOnUiThread(() -> presenter.setListAdapter(adapter));
     }
@@ -68,7 +69,7 @@ public class FavsFragmentView implements MvcView
 
 
     //-----------------------------------/ Custom list adapter inner class /----------------------------
-    class FavsListAdapter extends ArrayAdapter<Station>
+    public class ViewListAdapter extends ArrayAdapter<Station>
     {
         class ViewHolder
         {
@@ -81,7 +82,7 @@ public class FavsFragmentView implements MvcView
         private final List<Station> list;
         private  ViewHolder viewHolder;
 
-        public FavsListAdapter(Context context, int resource, List<Station> listOfFavs)
+        public ViewListAdapter(Context context, int resource, List<Station> listOfFavs)
         {
             super(context, resource, listOfFavs);
             layout = resource;

@@ -4,6 +4,12 @@
 
 
     <SwitchPreference
+        android:defaultValue="false"
+        android:key="sort_favorites"
+        android:summary="@string/pref_sort_favorites_summary"
+        android:title= "@string/pref_sort_favs" />
+
+    <SwitchPreference
         android:defaultValue="true"
         android:key="last_played"
         android:summary="@string/pref_last_played_summary"
