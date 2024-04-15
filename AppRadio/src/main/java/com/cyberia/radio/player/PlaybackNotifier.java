@@ -1,5 +1,8 @@
 package com.cyberia.radio.player;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -11,6 +14,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.media.session.MediaSession;
+import android.os.Build;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
 
@@ -23,6 +28,7 @@ import com.cyberia.radio.MainActivity;
 import com.cyberia.radio.R;
 import com.cyberia.radio.global.MyAppContext;
 import com.cyberia.radio.helpers.ExceptionHandler;
+import com.cyberia.radio.helpers.MyPrint;
 import com.cyberia.radio.io.ConnectionClient;
 
 import java.io.IOException;
@@ -112,10 +118,11 @@ public class PlaybackNotifier
         NotificationCompat.Action stop = new NotificationCompat.Action.Builder(R.drawable.ic_notif_stop, "Stop", stopIntent).build();
         NotificationCompat.Action close = new NotificationCompat.Action.Builder(R.drawable.ic_notif_close, "Close", closeIntent).build();
 
-       MediaStyle style = new MediaStyle()
-                .setMediaSession(mediaSession.getSessionToken())
+        MediaStyle style = new MediaStyle()
                 .setShowActionsInCompactView(0, 1, 2);
 
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+            style = new MediaStyle().setMediaSession(mediaSession.getSessionToken());
 
         notificationBuilder = new NotificationCompat.Builder(con, CHANNEL_ID);
 
@@ -128,6 +135,7 @@ public class PlaybackNotifier
                 .addAction(play) //you can set a specific icon
                 .addAction(stop)
                 .addAction(close)
+                .setDefaults(Notification.DEFAULT_ALL)
                 .setStyle(style)
                 .build();
     }
@@ -135,8 +143,8 @@ public class PlaybackNotifier
 
     public void updateNotificationStation(final String station, final String url)
     {
-        Drawable drawable  = AppCompatResources.getDrawable
-                (con, !AppRadio.isNightMode ? R.drawable.ic_notif_no_thumb :  R.drawable.ic_notif_no_thumb_blk);
+        Drawable drawable = AppCompatResources.getDrawable
+                (con, !AppRadio.isNightMode ? R.drawable.ic_notif_no_thumb : R.drawable.ic_notif_no_thumb_blk);
 
         Bitmap defaultIcon = Bitmap.createBitmap(
                 drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
@@ -144,7 +152,8 @@ public class PlaybackNotifier
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
 
-        NotificationManager manager = con.getSystemService(NotificationManager.class);
+        //Get the notification object
+        NotificationManager manager = (NotificationManager) getSystemService(con, NotificationManager.class);
 
         notificationBuilder.setContentTitle(station);
 
@@ -174,13 +183,15 @@ public class PlaybackNotifier
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                     notificationBuilder.setLargeIcon(bitmap);
                 }
-            } catch (IOException e)
+            }
+            catch (IOException e)
             {
                 ExceptionHandler.onException("PlaybackNotifier", e);
                 notificationBuilder.setLargeIcon(defaultIcon);
                 manager.notify(NOTIFICATION_ID, notificationBuilder.build());
             }
-        } else
+        }
+        else
         {
             notificationBuilder.setLargeIcon(defaultIcon);
         }
@@ -197,7 +208,6 @@ public class PlaybackNotifier
         manager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 
-
     private void createNotificationChannel()
     {
         Context con = MyAppContext.INSTANCE.getAppContext();
@@ -205,7 +215,7 @@ public class PlaybackNotifier
         NotificationChannel serviceChannel = new NotificationChannel(
                 CHANNEL_ID,
                 CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_NONE
+                NotificationManager.IMPORTANCE_DEFAULT
         );
         NotificationManager manager = con.getSystemService(NotificationManager.class);
         manager.createNotificationChannel(serviceChannel);

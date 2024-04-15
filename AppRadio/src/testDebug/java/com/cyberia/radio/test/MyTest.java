@@ -14,6 +14,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 
+
 import java.io.IOException;
 
 
@@ -33,7 +34,7 @@ public class MyTest
     @After
     public void closeDb() throws IOException
     {
-        db.close();
+//        db.close();
     }
 
     @Test

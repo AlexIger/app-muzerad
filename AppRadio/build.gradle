@@ -13,9 +13,9 @@ android {
 
         applicationId "com.cyberia.radio.AppRadio"
         minSdk 26
-        targetSdkVersion 33
-        versionCode 720
-        versionName "7.2"
+        targetSdk 33
+        versionCode 730
+        versionName "7.3"
 //        vectorDrawables.useSupportLibrary = true
 
         packagingOptions {
@@ -117,6 +117,7 @@ android {
         // Core library
         androidTestImplementation 'androidx.test:core:1.6.0-alpha04'
         testImplementation 'androidx.test:core:1.5.0'
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
 
         // AndroidJUnitRunner and JUnit Rules
         androidTestImplementation 'androidx.test:runner:1.5.2'

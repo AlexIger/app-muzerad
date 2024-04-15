@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.media.MediaDescriptionCompat;
@@ -68,8 +69,8 @@ public class PlayerService extends Service
     {
         startPlayback();
 
-//        MediaButtonReceiver.handleIntent(null, intent);
-//        return super.onStartCommand(intent, flags, startId);
+        //        MediaButtonReceiver.handleIntent(null, intent);
+        //        return super.onStartCommand(intent, flags, startId);
 
         return START_STICKY;
     }
@@ -120,7 +121,7 @@ public class PlayerService extends Service
         if (controller != null)
             controller.onPlayerStopped();
 
-//        EqualizerManager.getInstance().removeFromSession();
+        //        EqualizerManager.getInstance().removeFromSession();
     }
 
     public void startPlayback()
@@ -166,20 +167,24 @@ public class PlayerService extends Service
 
             MediaSessionConnector mediaSessionConnector = new MediaSessionConnector(mediaSession);
 
-            mediaSessionConnector.setQueueNavigator((new TimelineQueueNavigator(mediaSession)
+            if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
             {
-                @NonNull
-                @Override
-                public MediaDescriptionCompat getMediaDescription(@NonNull Player player, int windowIndex)
+                mediaSessionConnector.setQueueNavigator((new TimelineQueueNavigator(mediaSession)
                 {
-                    Bundle extras = new Bundle();
-                    extras.putInt(MediaMetadataCompat.METADATA_KEY_DURATION, -1);
+                    @NonNull
+                    @Override
+                    public MediaDescriptionCompat getMediaDescription(@NonNull Player player, int windowIndex)
+                    {
+                        Bundle extras = new Bundle();
+                        extras.putInt(MediaMetadataCompat.METADATA_KEY_DURATION, -1);
 
-                    return new MediaDescriptionCompat.Builder()
-                            .setExtras(extras)
-                            .build();
-                }
-            }));
+                        return new MediaDescriptionCompat.Builder()
+                                .setExtras(extras)
+                                .build();
+                    }
+                }));
+            }
+
 
             mediaSessionConnector.setMediaButtonEventHandler(mediaButtonHandler);
             mediaSessionConnector.setPlayer(player);
@@ -288,8 +293,8 @@ public class PlayerService extends Service
                 if (playbackState == Player.STATE_READY)
                 {
                     int sessionID = player.getAudioSessionId();
-                   MyThreadPool.INSTANCE.getExecutorService().execute(() ->
-                           EqualizerManager.getInstance().initEqualizer(sessionID));
+                    MyThreadPool.INSTANCE.getExecutorService().execute(() ->
+                            EqualizerManager.getInstance().initEqualizer(sessionID));
                 }
             }
 

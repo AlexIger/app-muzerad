@@ -25,7 +25,7 @@ import mehdi.sakout.aboutpage.Element;
 public class AboutFragment extends Fragment
 {
     private static final String ABOUT_SCREEN = "About";
-    private static final String VERSION = "7.2";
+    private static final String VERSION = "7.3";
 
     public static AboutFragment newInstance()
     {
