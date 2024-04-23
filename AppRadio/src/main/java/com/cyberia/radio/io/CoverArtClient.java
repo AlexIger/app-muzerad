@@ -70,11 +70,11 @@ public class CoverArtClient
 
     public synchronized void showDefaultLogo()
     {
-//        MyPrint.printOut("Cover art", "attempting to retrieve default logo");
+        //        MyPrint.printOut("Cover art", "attempting to retrieve default logo");
         CountDownLatch latch = new CountDownLatch(1);
         ImageView view = controller.findViewById(R.id.cover_art_image_view);
 
-       MyThreadPool.INSTANCE.getExecutorService().execute(new Runnable()
+        MyThreadPool.INSTANCE.getExecutorService().execute(new Runnable()
         {
             Bitmap imageLogo;
 
@@ -119,16 +119,19 @@ public class CoverArtClient
                             options.inScaled = false;
                             imageLogo = BitmapFactory.decodeStream(inputStream, null, options);
                         }
-                    } catch (IOException e)
+                    }
+                    catch (IOException e)
                     {
                         ExceptionHandler.onException(TAG, 122, e);
                     }
-                } catch (CoverArtException e)
+                }
+                catch (CoverArtException e)
                 {
                     ExceptionHandler.onException(TAG, 126, e);
                 }
 
-                MyHandler.getHandler().post(() -> {
+                MyHandler.getHandler().post(() ->
+                {
                     if (Objects.nonNull(imageLogo))
                         view.setImageBitmap(imageLogo);
                     else
@@ -142,7 +145,8 @@ public class CoverArtClient
         try
         {
             latch.await();
-        } catch (InterruptedException e)
+        }
+        catch (InterruptedException e)
         {
             ExceptionHandler.onException(TAG, 150, e);
         }
@@ -152,16 +156,16 @@ public class CoverArtClient
     {
         try
         {
-            if(artistSong == null || artistSong.trim().length() < 3)
+            if (artistSong == null || artistSong.trim().length() < 3)
                 throw new CoverArtException("Artist-Song string is null/empty");
 
             //prepare the artist and song strings, or pass null
-//            Pair<String, String> artistSong = SongTitleFilter.filterArtistSong(nowPlaying);
+            //            Pair<String, String> artistSong = SongTitleFilter.filterArtistSong(nowPlaying);
 
             String[] pair = artistSong.split("-");
             String mbString = null;
 
-            if(pair.length > 1)
+            if (pair.length > 1)
                 mbString = getCoverArtUrl(Queries.getMBIDQuery(pair[0], pair[1]), REQUEST_MUSICBRAINZ);
 
             if (TextUtils.isEmpty(mbString))
@@ -175,7 +179,8 @@ public class CoverArtClient
 
             displayImage(imgUrl);
 
-        } catch (CoverArtException e)
+        }
+        catch (CoverArtException e)
         {
             ExceptionHandler.onException(TAG, 256, e);
             showDefaultLogo();
@@ -216,7 +221,8 @@ public class CoverArtClient
                 {
                     // MyPrint.print(TAG, "DisplayImage #onResponse: Call was canceled", 224);
                     throw new IOException("Call was canceled");
-                } else if (!response.isSuccessful())
+                }
+                else if (!response.isSuccessful())
                 {
                     // MyPrint.printOut(TAG, "DisplayImage #onResponse: Unsuccessful, attempt to display default logo");
                     showDefaultLogo();
@@ -234,7 +240,8 @@ public class CoverArtClient
                     options.inScaled = false;
                     Bitmap imgCoverArt = BitmapFactory.decodeStream(inputStream);
 
-                    MyHandler.getHandler().post(() -> {
+                    MyHandler.getHandler().post(() ->
+                    {
                         if (imgCoverArt != null)
                             view.setImageBitmap(imgCoverArt);
                         else
@@ -248,7 +255,8 @@ public class CoverArtClient
         try
         {
             latch.await();
-        } catch (InterruptedException e)
+        }
+        catch (InterruptedException e)
         {
             ExceptionHandler.onException(TAG, 257, e);
         }
@@ -294,11 +302,13 @@ public class CoverArtClient
                 {
                     // MyPrint.print(TAG, "GetCoverArtUrl; Call was canceled", 295);
                     throw new IOException("Call was canceled");
-                } else if (!response.isSuccessful())
+                }
+                else if (!response.isSuccessful())
                 {
                     // MyPrint.print(TAG, "GetCoverArtUrl; response not successful", 300);
                     responseString[0] = null;
-                } else
+                }
+                else
                 {
                     try
                     {
@@ -333,7 +343,8 @@ public class CoverArtClient
                                     responseString[0] = thumbnails.getLarge();
                             }
                         }
-                    } catch (JsonSyntaxException e)
+                    }
+                    catch (JsonSyntaxException e)
                     {
                         ExceptionHandler.onException(TAG, 347, e);
                         responseString[0] = null;
@@ -347,7 +358,8 @@ public class CoverArtClient
         try
         {
             latch.await();
-        } catch (InterruptedException e)
+        }
+        catch (InterruptedException e)
         {
             ExceptionHandler.onException(TAG, 348, e);
         }

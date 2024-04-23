@@ -118,11 +118,12 @@ public class PlaybackNotifier
         NotificationCompat.Action stop = new NotificationCompat.Action.Builder(R.drawable.ic_notif_stop, "Stop", stopIntent).build();
         NotificationCompat.Action close = new NotificationCompat.Action.Builder(R.drawable.ic_notif_close, "Close", closeIntent).build();
 
-        MediaStyle style = new MediaStyle()
-                .setShowActionsInCompactView(0, 1, 2);
+        MediaStyle style = new MediaStyle();
 
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
-            style = new MediaStyle().setMediaSession(mediaSession.getSessionToken());
+            style.setMediaSession(mediaSession.getSessionToken());
+
+        style.setShowActionsInCompactView(0, 1, 2);
 
         notificationBuilder = new NotificationCompat.Builder(con, CHANNEL_ID);
 
@@ -135,7 +136,6 @@ public class PlaybackNotifier
                 .addAction(play) //you can set a specific icon
                 .addAction(stop)
                 .addAction(close)
-                .setDefaults(Notification.DEFAULT_ALL)
                 .setStyle(style)
                 .build();
     }
@@ -153,7 +153,7 @@ public class PlaybackNotifier
         drawable.draw(canvas);
 
         //Get the notification object
-        NotificationManager manager = (NotificationManager) getSystemService(con, NotificationManager.class);
+        NotificationManager manager = con.getSystemService(NotificationManager.class);
 
         notificationBuilder.setContentTitle(station);
 
@@ -215,7 +215,7 @@ public class PlaybackNotifier
         NotificationChannel serviceChannel = new NotificationChannel(
                 CHANNEL_ID,
                 CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_NONE
         );
         NotificationManager manager = con.getSystemService(NotificationManager.class);
         manager.createNotificationChannel(serviceChannel);
