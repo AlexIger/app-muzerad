@@ -130,7 +130,7 @@ public class CoverArtClient
                     ExceptionHandler.onException(TAG, 126, e);
                 }
 
-                MyHandler.getHandler().post(() ->
+                MyHandler.post(() ->
                 {
                     if (Objects.nonNull(imageLogo))
                         view.setImageBitmap(imageLogo);
@@ -240,7 +240,7 @@ public class CoverArtClient
                     options.inScaled = false;
                     Bitmap imgCoverArt = BitmapFactory.decodeStream(inputStream);
 
-                    MyHandler.getHandler().post(() ->
+                    MyHandler.post(() ->
                     {
                         if (imgCoverArt != null)
                             view.setImageBitmap(imgCoverArt);

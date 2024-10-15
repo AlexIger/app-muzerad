@@ -2,8 +2,9 @@
 <resources>
     <style name="Theme.AppSplash" parent="Theme.SplashScreen">
         <item name="android:windowSplashScreenBackground">@color/colorWindowBackground</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_screen_icon</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_screen_icon_no_bg</item>
         <item name="android:windowSplashScreenAnimationDuration">1000</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">#ffff</item>
         <item name="postSplashScreenTheme">@style/AppTheme</item>
 
         <!-- Status bar and Nav bar configs -->

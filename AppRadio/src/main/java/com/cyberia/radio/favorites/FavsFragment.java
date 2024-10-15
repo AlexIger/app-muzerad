@@ -234,21 +234,20 @@ public class FavsFragment extends ListFragment implements MvcViewEventListener
     public void onDetach()
     {
         super.onDetach();
-        controller = null;
-
     }
 
     @Override
     public void onDestroyView()
     {
         super.onDestroyView();
+        favsFragmentView = null;
     }
 
     @Override
     public void onDestroy()
     {
         super.onDestroy();
-        favsFragmentView = null;
+        controller = null;
     }
 
     @Override

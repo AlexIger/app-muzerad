@@ -91,7 +91,7 @@ public class LanguageFragment extends ListFragment implements MvcViewEventListen
 
         if (langMap == null || langMap.isEmpty())
         {
-            MyHandler.getHandler().post(() -> Toast.makeText(getActivity(), "Stations not found", Toast.LENGTH_LONG).show());
+            MyHandler.post(() -> Toast.makeText(getActivity(), "Stations not found", Toast.LENGTH_LONG).show());
         } else
         {
             List<Map.Entry<String, Integer>> languageList = new ArrayList<>(langMap.entrySet());
@@ -102,7 +102,7 @@ public class LanguageFragment extends ListFragment implements MvcViewEventListen
     public void onModelError(String msg)
     {
         cancelProgress();
-        MyHandler.getHandler().post(() -> Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show());
+        MyHandler.post(() -> Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show());
     }
 
 

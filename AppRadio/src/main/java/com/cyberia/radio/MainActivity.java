@@ -1,15 +1,18 @@
 package com.cyberia.radio;
 
 
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.view.Menu;
@@ -28,6 +31,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -43,6 +48,7 @@ import com.cyberia.radio.equalizer.EqualizerSettings;
 import com.cyberia.radio.eventbus.Events;
 import com.cyberia.radio.favorites.FavsFragment;
 import com.cyberia.radio.genres.GenreFragment;
+import com.cyberia.radio.global.BluetoothReceiver;
 import com.cyberia.radio.global.MyHandler;
 import com.cyberia.radio.global.MyThreadPool;
 import com.cyberia.radio.helpers.ExceptionHandler;
@@ -125,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements Controller
     private WifiManager.WifiLock wifiLock;
 
     private BroadcastReceiver notificationReceiver;
+    private BluetoothReceiver bluetoothReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -174,9 +182,11 @@ public class MainActivity extends AppCompatActivity implements Controller
                         switcher.showNext();
                         isTopShown.set(true);
                     }
-                } else if (newState.equals(PanelState.COLLAPSED))
+                }
+                else if (newState.equals(PanelState.COLLAPSED))
                 {
-                    if (isTopShown.get()) switcher.showNext();
+                    if (isTopShown.get())
+                        switcher.showNext();
                     isTopShown.set(false);
                 }
             }
@@ -199,7 +209,8 @@ public class MainActivity extends AppCompatActivity implements Controller
 
         //Toogle play-stop button
         ImageView toggleButton = findViewById(R.id.button_play_stop);
-        toggleButton.setOnClickListener(v -> {
+        toggleButton.setOnClickListener(v ->
+        {
 
             if (cookieRefs.get() == null)
             {
@@ -215,25 +226,26 @@ public class MainActivity extends AppCompatActivity implements Controller
 
         //set progress ring
         progressBar = (findViewById(R.id.progress_circle));
-//        progressBar.setProgressDrawable(getDrawable(R.drawable.circular));
+        //        progressBar.setProgressDrawable(getDrawable(R.drawable.circular));
 
         //Add Home screen
         addHomeScreenFragment();
         playbackManager = new PlaybackManager(MainActivity.this);
 
-//        HistoryManager.initHistory();
-//        PlaylistManager.initPlaylist();
+        //        HistoryManager.initHistory();
+        //        PlaylistManager.initPlaylist();
 
         // Create wakelock
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "muze_radio: wakelock");
+//        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+//        wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "muze_radio: wakelock");
         WifiManager wm = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         wifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_FULL, "myId");
 
-        wakelock.acquire(10 * 60 * 1000L /*10 minutes*/);
-        wifiLock.acquire();
+//        wakelock.acquire();
+//        wifiLock.acquire();
 
         initBroadcastReceiver();
+        registerBluetoothReceiver();
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         handleSharedStation(getIntent());
     }
@@ -244,14 +256,13 @@ public class MainActivity extends AppCompatActivity implements Controller
         super.onNewIntent(intent);
         handleSharedStation(getIntent());
 
-//            Bundle bundle = intent.getExtras();
-//            if (bundle != null)
-//            {
-//                  handleSharedStation(getIntent().getParcelableExtra(Intent.EXTRA_INTENT));
-//                MyPrint.printOut("Main", "Bundle is not null, String is: " +  bundle.getString("from_notifier"));
-//            }
+        //            Bundle bundle = intent.getExtras();
+        //            if (bundle != null)
+        //            {
+        //                  handleSharedStation(getIntent().getParcelableExtra(Intent.EXTRA_INTENT));
+        //                MyPrint.printOut("Main", "Bundle is not null, String is: " +  bundle.getString("from_notifier"));
+        //            }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -301,17 +312,18 @@ public class MainActivity extends AppCompatActivity implements Controller
                 (mLayout.getPanelState() == PanelState.EXPANDED || mLayout.getPanelState() == PanelState.ANCHORED))
         {
             mLayout.setPanelState(PanelState.COLLAPSED);
-        } else
+        }
+        else
         {
             super.onBackPressed();
-//            finish();
+            //            finish();
         }
     }
 
     @Override
     public void slidePanel(int direction)
     {
-        MyHandler.getHandler().post(() ->
+        MyHandler.post(() ->
         {
             if (direction == PANEL_SLIDE_UP)
                 mLayout.setPanelState(PanelState.EXPANDED);
@@ -324,11 +336,13 @@ public class MainActivity extends AppCompatActivity implements Controller
     public void createPopup()
     {
         final ImageButton btnPopup = findViewById(R.id.button_overflow);
-        btnPopup.setOnClickListener(v -> {
+        btnPopup.setOnClickListener(v ->
+        {
             PopupMenu popup = new PopupMenu(MainActivity.this, btnPopup);
             popup.getMenuInflater().inflate(R.menu.menu_player, popup.getMenu());
 
-            popup.setOnMenuItemClickListener(item -> {
+            popup.setOnMenuItemClickListener(item ->
+            {
                 if (item.getItemId() == R.id.menu_favorites)
                 {
                     addToFavorites();
@@ -356,7 +370,8 @@ public class MainActivity extends AppCompatActivity implements Controller
     //    -----------------------------------------/ Player functions /----------------------------------
     public synchronized void playerStart()
     {
-        if (playbackManager == null) return;
+        if (playbackManager == null)
+            return;
 
         if (isDeviceConnected())
         {
@@ -398,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements Controller
 
     private synchronized void resetTransport()
     {
-//         MyPrint.printOut(TAG, "resetTransport");
+        //         MyPrint.printOut(TAG, "resetTransport");
         progressBar.setProgress(MAX); // resets the ring
         isPlaying.set(false);
         setToggleButton();
@@ -411,13 +426,14 @@ public class MainActivity extends AppCompatActivity implements Controller
     private void setPlayButtonEnabled(boolean enabled)
     {
         final ImageButton btnPlay = findViewById(R.id.button_play);
-        MyHandler.getHandler().post(() -> {
+        MyHandler.post(() ->
+        {
             btnPlay.setEnabled(enabled);
-//                Drawable img = getDrawable(R.drawable.ic_play_new).mutate();
+            //                Drawable img = getDrawable(R.drawable.ic_play_new).mutate();
             if (enabled)
                 btnPlay.setImageAlpha(0xFF);
             else
-//                    btnPlay.setImageAlpha(0x3F);
+                //                    btnPlay.setImageAlpha(0x3F);
                 btnPlay.setImageAlpha(BUTTON_OPACITY);
         });
     }
@@ -427,7 +443,8 @@ public class MainActivity extends AppCompatActivity implements Controller
         // MyPrint.printOut(TAG, "setPausedButtonEnabled: " + enabled);
         final ImageButton pause = findViewById(R.id.button_pause);
 
-        MyHandler.getHandler().post(() -> {
+        MyHandler.post(() ->
+        {
             pause.setEnabled(enabled);
             if (enabled)
                 pause.setImageAlpha(0xFF);
@@ -439,9 +456,10 @@ public class MainActivity extends AppCompatActivity implements Controller
     private void setStopButtonEnabled(boolean enabled)
     {
         final ImageButton stop = findViewById(R.id.button_stop);
-        MyHandler.getHandler().post(() -> {
+        MyHandler.post(() ->
+        {
             stop.setEnabled(enabled);
-//                Drawable img = getDrawable(R.drawable.ic_stop_new).mutate();
+            //                Drawable img = getDrawable(R.drawable.ic_stop_new).mutate();
             if (enabled)
                 stop.setImageAlpha(0xFF);
             else
@@ -454,24 +472,27 @@ public class MainActivity extends AppCompatActivity implements Controller
     {
         if (url != null)
         {
-            MyThreadPool.INSTANCE.getExecutorService().execute(() -> {
+            MyThreadPool.INSTANCE.getExecutorService().execute(() ->
+            {
                 try
                 {
                     if (playbackManager != null)
                     {
                         playbackManager.stopPlayingStation();
-//                            playbackManager = null;
+                        //                            playbackManager = null;
                         playbackManager.setUrl(url);
                         playerStart();
                     }
-//                        playbackManager = new PlaybackManager(MainActivity.this);
+                    //                        playbackManager = new PlaybackManager(MainActivity.this);
 
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     ExceptionHandler.onException(MainActivity.class.getSimpleName(), e);
                 }
             });
-        } else
+        }
+        else
         {
             updatePlaybackStatus(MSG_FAIL_CONNECT);
         }
@@ -492,9 +513,11 @@ public class MainActivity extends AppCompatActivity implements Controller
     public void onPlaybackStarted()
     {
         // MyPrint.printOut(TAG, "onPlaybackStarted");
-        if (playbackManager.paused()) return;
+        if (playbackManager.paused())
+            return;
 
-        MyThreadPool.INSTANCE.getExecutorService().execute(() -> {
+        MyThreadPool.INSTANCE.getExecutorService().execute(() ->
+        {
             addToRecent();
             CoverArtClient.getInstance()
                     .setController(MainActivity.this)
@@ -508,13 +531,15 @@ public class MainActivity extends AppCompatActivity implements Controller
     {
         final ImageButton btnToggle = findViewById(R.id.button_play_stop);
 
-        MyHandler.getHandler().post(() -> {
+        MyHandler.post(() ->
+        {
             synchronized (lock2)
             {
                 if (isPlaying.get())
                 {
                     btnToggle.setImageResource(R.drawable.ic_stop_black_24dp);
-                } else
+                }
+                else
                 {
                     btnToggle.setImageResource(R.drawable.ic_play_new);
                 }
@@ -531,7 +556,8 @@ public class MainActivity extends AppCompatActivity implements Controller
     @Override
     public void onStationInfoAvailable(@Nullable final StationCookie station)
     {
-        if (station == null) return;
+        if (station == null)
+            return;
 
         startPlayerSession(station.getUrlResolved());
         cookieRefs.set(station);
@@ -550,7 +576,8 @@ public class MainActivity extends AppCompatActivity implements Controller
         String genre = getCookieRefs().getGenre();
         String country = getCookieRefs().getCountry();
 
-        MyHandler.getHandler().post(() -> {
+        MyHandler.post(() ->
+        {
             lblRadioName.setText(title);
             lblStationName.setText(title);
             lblStationCountry.setText(country);
@@ -562,7 +589,8 @@ public class MainActivity extends AppCompatActivity implements Controller
     {
         TextView lblRadioName = findViewById(R.id.label_radio);
 
-        MyHandler.getHandler().post(() -> {
+        MyHandler.post(() ->
+        {
             if (title != null && !title.isEmpty())
             {
                 lblRadioName.setText(title);
@@ -577,7 +605,7 @@ public class MainActivity extends AppCompatActivity implements Controller
                     .setController(MainActivity.this)
                     .showDefaultLogo();
 
-//            CoverArtManager.getInstance(MainActivity.this).showStationLogo(cookieRefs.get().getThumbUrl());
+        //            CoverArtManager.getInstance(MainActivity.this).showStationLogo(cookieRefs.get().getThumbUrl());
 
         MyThreadPool.INSTANCE.getExecutorService().execute(this::updateRadioInfo);
     }
@@ -585,7 +613,7 @@ public class MainActivity extends AppCompatActivity implements Controller
     @Subscribe
     public void onBufferingEvent(final Events.BufferingEvent event)
     {
-        MyHandler.getHandler().post(() -> progressBar.setProgress(event.increment * 10));
+        MyHandler.post(() -> progressBar.setProgress(event.increment * 10));
 
         String status = STRING_BUFFERING + event.increment * 10 + "%";
 
@@ -603,12 +631,12 @@ public class MainActivity extends AppCompatActivity implements Controller
 
     private void addToFavorites()
     {
-//        MyThreadPool.INSTANCE.getExecutorService().execute(() ->
-//                FavoritesManager.getInstance()
-//                        .doAccessDB(cookieRefs.get(), FavoritesManager.Perform.INSERT));
+        //        MyThreadPool.INSTANCE.getExecutorService().execute(() ->
+        //                FavoritesManager.getInstance()
+        //                        .doAccessDB(cookieRefs.get(), FavoritesManager.Perform.INSERT));
 
-//        MyThreadPool.INSTANCE.getExecutorService().execute(() -> Repository.getInstance()
-//                        .insertFavoriteStation(cookieRefs.get()));
+        //        MyThreadPool.INSTANCE.getExecutorService().execute(() -> Repository.getInstance()
+        //                        .insertFavoriteStation(cookieRefs.get()));
 
 
         MyThreadPool.INSTANCE.getExecutorService().execute(() ->
@@ -619,7 +647,7 @@ public class MainActivity extends AppCompatActivity implements Controller
     // add to history
     private void addToRecent()
     {
-//        MyThreadPool.INSTANCE.getExecutorService().execute(() -> HistoryManager.addToRecent(cookieRefs.get()));
+        //        MyThreadPool.INSTANCE.getExecutorService().execute(() -> HistoryManager.addToRecent(cookieRefs.get()));
         MyThreadPool.INSTANCE.getExecutorService().execute(() ->
                 Repository.getInstance().insertHistoryStation(cookieRefs.get()));
     }
@@ -628,32 +656,35 @@ public class MainActivity extends AppCompatActivity implements Controller
     //-----------------------------------------------/ Update UI Methods /--------------------------
     public void updateArtistSongName(final String data)
     {
-        MyThreadPool.INSTANCE.getExecutorService().execute(() -> {
+        MyThreadPool.INSTANCE.getExecutorService().execute(() ->
+        {
 
             final TextView lblSongName = findViewById(R.id.label_song);
             final TextView lblTopPanel = findViewById(R.id.artist_name_top);
 
-            MyHandler.getHandler().post(() -> {
+            MyHandler.post(() ->
+            {
                 lblSongName.setText(data);
                 lblTopPanel.setText(data);
                 lblSongName.setSelected(true);
             });
         });
 
-//                    lblSongName.setSelected(true);
-//                    lblSongName.setEllipsize(TextUtils.TruncateAt.END);
-//                    lblSongName.setSingleLine(true);
+        //                    lblSongName.setSelected(true);
+        //                    lblSongName.setEllipsize(TextUtils.TruncateAt.END);
+        //                    lblSongName.setSingleLine(true);
     }
 
     //updates bottom panel text view with Playback or Connection events (stopped, failed, playing, etc.)
     public void updatePlaybackStatus(final String status)
     {
-        MyThreadPool.INSTANCE.getExecutorService().execute(() -> {
+        MyThreadPool.INSTANCE.getExecutorService().execute(() ->
+        {
             synchronized (lock1)
             {
                 TextView lblSongName = findViewById(R.id.label_song);
                 TextView lblTopPanel = findViewById(R.id.artist_name_top);
-                MyHandler.getHandler().post(() ->
+                MyHandler.post(() ->
                 {
                     if (lblSongName != null)
                         lblSongName.setText(status);
@@ -672,8 +703,8 @@ public class MainActivity extends AppCompatActivity implements Controller
                 .cancelCallWithTag(CoverArtClient.TAG_COVER_ART)
                 .fetchCoverArt(artData));
 
-//            onCoverArtAvailable(image);
-//            ArtModel.getInstance(this).getCoverArt(artData);
+        //            onCoverArtAvailable(image);
+        //            ArtModel.getInstance(this).getCoverArt(artData);
     }
 
     public void displayRadioDetail()
@@ -681,7 +712,8 @@ public class MainActivity extends AppCompatActivity implements Controller
 
         StationCookie cookie = cookieRefs.get();
 
-        if (cookie == null) return;
+        if (cookie == null)
+            return;
 
         String strBitRate;
         ArrayList<String> list = new ArrayList<>();
@@ -704,7 +736,7 @@ public class MainActivity extends AppCompatActivity implements Controller
         list.add(cookie.getThumbUrl());
         addRadioDetailFragment(list);
 
-        MyHandler.getHandler().post(() ->
+        MyHandler.post(() ->
                 mLayout.setPanelState(PanelState.COLLAPSED));
     }
 
@@ -719,7 +751,8 @@ public class MainActivity extends AppCompatActivity implements Controller
         {
             navbar.setNavigationIcon(R.drawable.ic_chevron_left_black_24dp);
             navbar.setNavigationOnClickListener(view -> onBackPressed());
-        } else
+        }
+        else
         {
             navbar.setNavigationIcon(R.drawable.ic_home_black_24dp);
             navbar.setNavigationOnClickListener(null);
@@ -731,13 +764,15 @@ public class MainActivity extends AppCompatActivity implements Controller
     {
         ActionBar bar = getSupportActionBar();
 
-        if (bar == null) return;
+        if (bar == null)
+            return;
 
         if (subtitle != null)
         {
             bar.setTitle(title);
             bar.setSubtitle(subtitle);
-        } else
+        }
+        else
         {
             bar.setTitle(title);
             bar.setSubtitle(null);
@@ -809,6 +844,7 @@ public class MainActivity extends AppCompatActivity implements Controller
 
         replaceFragment(frag);
     }
+
     @Override
     public void addFavsScreenFragment()
     {
@@ -908,7 +944,7 @@ public class MainActivity extends AppCompatActivity implements Controller
 
         if (eqManager.getCurrentSessionID() <= 0)
         {
-            MyHandler.getHandler().post(() -> Toast.makeText(getApplicationContext(), "Equalizer available on playback", Toast.LENGTH_SHORT).show());
+            MyHandler.post(() -> Toast.makeText(getApplicationContext(), "Equalizer available on playback", Toast.LENGTH_SHORT).show());
             return;
         }
 
@@ -1003,15 +1039,14 @@ public class MainActivity extends AppCompatActivity implements Controller
         {
             updateLastPlayedStation();
             playbackManager.setUrl(cookieRefs.get().getUrlResolved());
-        } else
+        }
+        else
         {
             updateLastPlayedStationDefaultName(AppSetup.DEFAULT);
         }
 
-
-        IntentFilter filter = new IntentFilter("android.intent.action.MEDIA_BUTTON");
-        filter.setPriority(1000);
-
+        //        IntentFilter filter = new IntentFilter("android.intent.action.MEDIA_BUTTON");
+        //        filter.setPriority(1000);
     }
 
     @Override
@@ -1019,12 +1054,10 @@ public class MainActivity extends AppCompatActivity implements Controller
     {
         super.onStop();
 
-      updataDatabaseOnExit();
-
         // ger Preferences object
         SharedPreferences prefs =
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//        SharedPreferences prefs = getSharedPreferences(AppSetup.SETTINGS, Context.MODE_PRIVATE);
+        //        SharedPreferences prefs = getSharedPreferences(AppSetup.SETTINGS, Context.MODE_PRIVATE);
         //show last played station
         boolean lastPlayed = prefs.getBoolean("last_played", true);
         if (lastPlayed)
@@ -1061,22 +1094,20 @@ public class MainActivity extends AppCompatActivity implements Controller
 
         //unregister notification broadcast
         unregisterReceiver(notificationReceiver);
+        unregisterBluetoothReceiver();
+
         //release locks
-        wakelock.release();
+//        if (wakelock != null && wakelock.isHeld())
+//            wakelock.release();
+
         wifiLock.release();
 
         MyThreadPool.INSTANCE.getExecutorService().shutdown();
     }
 
-     private synchronized void updataDatabaseOnExit()
-    {
-//        PlaylistManager.updatePlaylistDB();
-//        HistoryManager.updateHistoryDB();
-    }
-
     private void notifyDeviceNotConnected()
     {
-        MyHandler.getHandler().post(() ->
+        MyHandler.post(() ->
                 Toast.makeText(getApplicationContext(), "Device is not connected", Toast.LENGTH_LONG).show());
     }
 
@@ -1099,7 +1130,8 @@ public class MainActivity extends AppCompatActivity implements Controller
             @Override
             public void onReceive(Context context, Intent intent)
             {
-                if (intent == null || intent.getAction() == null) return;
+                if (intent == null || intent.getAction() == null)
+                    return;
 
                 switch (intent.getAction())
                 {
@@ -1119,15 +1151,43 @@ public class MainActivity extends AppCompatActivity implements Controller
                 }
             }
         };
-        registerReceiver(notificationReceiver, filter);
+
+        registerReceiver(notificationReceiver, filter, Context.RECEIVER_EXPORTED);
     }
 
-//-----------------------------------------------------Intent--------------------------------------//
+    private void registerBluetoothReceiver()
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+        {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED)
+            {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.BLUETOOTH_CONNECT}, 1);
+            }
+        }
+
+        bluetoothReceiver = new BluetoothReceiver();
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        registerReceiver(bluetoothReceiver, filter, Context.RECEIVER_EXPORTED);
+    }
+
+    private void unregisterBluetoothReceiver()
+    {
+        unregisterReceiver(bluetoothReceiver);
+    }
+
+    @Subscribe
+    public void onBluetoothEvent(final Events.BluetoothEvent event)
+    {
+        if (event.isDisconnected)
+        {
+            playerStop();
+        }
+    }
+
+    //-----------------------------------------------------Intent--------------------------------------//
 
     public void handleSharedStation(Intent intent)
     {
-        MyPrint.printOut("Intent", "received");
-
         if (!Objects.isNull(intent))
         {
             Uri uri = intent.getData();
@@ -1143,26 +1203,24 @@ public class MainActivity extends AppCompatActivity implements Controller
                     slidePanel(MainActivity.PANEL_SLIDE_DOWN);
                 }
             }
-        } else
+        }
+        else
         {
             MyPrint.printOut("Intent is", "null");
         }
     }
 
-//    private static final String STATION_DATA = "com.radio.share_station_data";
-//    private static final String STATION_SHARING = "muzeradio_share_station";
-
     public void share()
     {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
-//        String address = "http://open.muzeradio/station?share=" + cookieRefs.get().getUuid();
+        //        String address = "http://open.muzeradio/station?share=" + cookieRefs.get().getUuid();
 
         String address = "https://muze-radio.tiiny.site?share=" + cookieRefs.get().getUuid();
 
         intent.putExtra(Intent.EXTRA_SUBJECT, cookieRefs.get().getTitle());
         intent.putExtra(Intent.EXTRA_TEXT, address);
-//        intent.putExtra(STATION_SHARING, STATION_DATA);
+        //        intent.putExtra(STATION_SHARING, STATION_DATA);
 
         startActivity(Intent.createChooser(intent, "Share via:"));
     }
@@ -1177,7 +1235,8 @@ public class MainActivity extends AppCompatActivity implements Controller
             if (isPlaying.compareAndSet(true, false))
             {
                 MainActivity.this.playerStop();
-            } else
+            }
+            else
             {
                 MainActivity.this.playerStart();
                 isPlaying.set(true);
@@ -1185,6 +1244,8 @@ public class MainActivity extends AppCompatActivity implements Controller
         }
     }
 }
+
+
 
 
 

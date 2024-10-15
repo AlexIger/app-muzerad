@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -84,6 +85,8 @@ public class HistoryFragment extends ListFragment implements MvcViewEventListene
         super.onViewCreated(view, hashMap);
     }
 
+
+
     @Override
     public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, ContextMenu.ContextMenuInfo menuInfo)
     {
@@ -133,7 +136,6 @@ public class HistoryFragment extends ListFragment implements MvcViewEventListene
         return true;
     }
 
-
     @Override
     public void onListItemClick(@NonNull ListView listView, @NonNull View view, int position, long id)
     {
@@ -142,7 +144,13 @@ public class HistoryFragment extends ListFragment implements MvcViewEventListene
             return;
 
         MyThreadPool.INSTANCE.getExecutorService().execute(() ->
-                controller.onStationInfoAvailable(new StationCookie(station)));
+        {
+            if (station != null)
+            {
+                StationCookie cookie = new StationCookie(station);
+                controller.onStationInfoAvailable(cookie);
+            }
+        });
     }
 
 
@@ -176,22 +184,24 @@ public class HistoryFragment extends ListFragment implements MvcViewEventListene
     @Override
     public void onDetach()
     {
+        MyPrint.printOut(getClass().getSimpleName(), "onDetach is called");
         super.onDetach();
     }
 
     @Override
     public void onDestroyView()
     {
+        MyPrint.printOut(getClass().getSimpleName(), "onDestroyView is called");
         super.onDestroyView();
+        historyFragmentView = null;
     }
 
     @Override
     public void onDestroy()
     {
+        MyPrint.printOut(getClass().getSimpleName(), "onDestroy is called");
         super.onDestroy();
-
         controller = null;
-        historyFragmentView = null;
     }
 
     @Override
@@ -204,6 +214,8 @@ public class HistoryFragment extends ListFragment implements MvcViewEventListene
     @Override
     public void onResume()
     {
+        MyPrint.printOut(getClass().getSimpleName(), "onResume is called");
+
         super.onResume();
 
         if (state != null)
@@ -228,6 +240,8 @@ public class HistoryFragment extends ListFragment implements MvcViewEventListene
                 if (CollectionUtils.isEmpty(station)) station.add(new Station(getString(R.string.empty_list)));
 
                 historyFragmentView.showHistory(station);
+
+                MyPrint.printOut(getClass().getSimpleName(), "onShowHistory is called");
             }
         });
     }

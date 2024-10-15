@@ -14,6 +14,7 @@ import androidx.fragment.app.ListFragment;
 
 import com.cyberia.radio.AppRadio;
 import com.cyberia.radio.R;
+import com.cyberia.radio.helpers.MyPrint;
 import com.cyberia.radio.persistent.Station;
 import com.cyberia.radio.global.MyHandler;
 import com.cyberia.radio.interfaces.MvcView;
@@ -47,16 +48,11 @@ public class HistoryFragmentView implements MvcView
         presenter.requireActivity().runOnUiThread(() -> presenter.setListAdapter(adapter));
     }
 
-
     protected void setListener(MvcViewEventListener _listener)
     {
         listener = _listener;
     }
 
-//    public HistoryListAdapter getAdapter()
-//    {
-//        return adapter;
-//    }
 
     @Override
     public View getRootView()
@@ -91,24 +87,6 @@ public class HistoryFragmentView implements MvcView
             layout = resource;
             this.listHistory = listHistory;
         }
-
-        public void remove(int position)
-        {
-            listHistory.remove(position);
-            invalidate();
-        }
-
-        public void removeAll()
-        {
-            listHistory.clear();
-            invalidate();
-        }
-
-        public void invalidate()
-        {
-            MyHandler.getHandler().post(() -> notifyDataSetChanged());
-        }
-
 
         @NonNull
         @Override

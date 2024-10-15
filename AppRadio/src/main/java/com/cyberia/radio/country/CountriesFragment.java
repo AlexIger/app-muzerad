@@ -143,6 +143,13 @@ public class CountriesFragment extends Fragment implements MvcViewEventListener
             Objects.requireNonNull(fragView.getRecyclerView().getLayoutManager(), "Must be NonNull").onRestoreInstanceState(state);
         }
     }
+    @Override
+    public void onDestroyView()
+    {
+        MyPrint.printOut(getClass().getSimpleName(), "onDestroyView is called");
+        super.onDestroyView();
+        fragView = null;
+    }
 
 
     @Override
@@ -150,15 +157,14 @@ public class CountriesFragment extends Fragment implements MvcViewEventListener
     {
         MyPrint.printOut(getClass().getSimpleName(), " onDetach");
         super.onDetach();
-        controller = null;
-        fragView = null;
-        countriesModel = null;
     }
 
     @Override
     public void onDestroy()
     {
         super.onDestroy();
+        controller = null;
+        countriesModel = null;
     }
 
     @Override

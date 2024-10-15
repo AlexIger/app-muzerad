@@ -125,18 +125,6 @@ public class FavsFragmentView implements MvcView
             return convertView;
         }
 
-        public void remove(int position)
-        {
-            list.remove(position);
-            invalidate();
-        }
-
-        public void removeAll()
-        {
-            list.clear();
-            invalidate();
-        }
-
         public void invalidate()
         {
            MyHandler.post(() -> notifyDataSetChanged());

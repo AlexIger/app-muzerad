@@ -215,7 +215,7 @@ public class SearchFragment extends ListFragment implements
 
         if (CollectionUtils.isEmpty(stationsList))
         {
-            MyHandler.getHandler().post(() ->
+            MyHandler.post(() ->
                     Toast.makeText(MyAppContext.INSTANCE.getAppContext(), STATION_NOT_FOUND, Toast.LENGTH_LONG).show());
         } else
         {
@@ -242,7 +242,7 @@ public class SearchFragment extends ListFragment implements
 
     void cancelProgress()
     {
-        MyHandler.getHandler().post(() -> {
+        MyHandler.post(() -> {
             if (progress != null)
             {
                 progress.setVisibility(ProgressBar.GONE);

@@ -22,6 +22,16 @@ public abstract class Events
         }
     }
 
+    static public class BluetoothEvent
+    {
+        public boolean isDisconnected;
+
+        public BluetoothEvent(boolean isConnected)
+        {
+            this.isDisconnected = isConnected;
+        }
+    }
+
     static public class BufferingEvent
     {
         public final int increment;
@@ -41,4 +51,5 @@ public abstract class Events
             this.status = status;
         }
     }
+
 }

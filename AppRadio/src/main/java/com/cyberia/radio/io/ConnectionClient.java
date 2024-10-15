@@ -2,6 +2,7 @@ package com.cyberia.radio.io;
 
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
@@ -36,7 +37,6 @@ final public class ConnectionClient
     public interface ConnectionCallback
     {
         void onStreamAvailable(InputStream in);
-
         void onConnectionEstablished();
     }
 
@@ -84,7 +84,7 @@ final public class ConnectionClient
             } catch (Exception e)
             {
                 onFailedConnection(msgStationUnavail);
-                ExceptionHandler.onException(TAG, 147, e);
+                ExceptionHandler.onException(TAG, 86, e);
             }
         }
     };
@@ -345,7 +345,14 @@ final public class ConnectionClient
         public void callFailed(Call call, @NonNull IOException ioe)
         {
             if (!call.isCanceled())
+            {
+                MyPrint.printOut(TAG, "closeQuietly: " + ioe.getMessage());
+                MyPrint.printOut(TAG, "closeQuietly stack trace: " + Log.getStackTraceString(ioe)); ;
+
+
                 onFailedConnection(msgConnLost);
+            }
+
         }
     }
 

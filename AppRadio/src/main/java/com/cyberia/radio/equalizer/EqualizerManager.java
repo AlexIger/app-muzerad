@@ -5,9 +5,7 @@ import android.graphics.Color;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
 import android.media.audiofx.LoudnessEnhancer;
-
 import androidx.preference.PreferenceManager;
-
 import com.cyberia.radio.AppSetup;
 import com.cyberia.radio.global.MyAppContext;
 

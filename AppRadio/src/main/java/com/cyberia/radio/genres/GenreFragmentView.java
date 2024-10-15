@@ -38,7 +38,7 @@ public class GenreFragmentView implements MvcView
     {
         GenreListAdapter myAdapter = new GenreListAdapter(con, R.layout.row_genre, list, genreTypes);
 
-        MyHandler.getHandler().post(() -> presenter.setListAdapter(myAdapter));
+        MyHandler.post(() -> presenter.setListAdapter(myAdapter));
     }
 
     protected void setListener(MvcViewEventListener _listener)

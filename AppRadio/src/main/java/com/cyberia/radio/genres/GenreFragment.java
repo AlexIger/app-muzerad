@@ -15,6 +15,7 @@ import androidx.fragment.app.ListFragment;
 
 import com.cyberia.radio.constant.GenreFlags;
 import com.cyberia.radio.helpers.MyNavController;
+import com.cyberia.radio.helpers.MyPrint;
 import com.cyberia.radio.interfaces.Controller;
 import com.cyberia.radio.interfaces.MvcViewEventListener;
 
@@ -137,14 +138,21 @@ public class GenreFragment extends ListFragment implements MvcViewEventListener
          }
      }
 
+     @Override
+     public void onDestroyView()
+     {
+         MyPrint.printOut(getClass().getSimpleName(), "onDestroyView is called");
+         super.onDestroyView();
+         genreFragmentView = null;
+     }
+
 
     @Override
     public void onDetach()
     {
         super.onDetach();
-        controller = null;
-        genreFragmentView = null;
         genreModel = null;
+        controller = null;
     }
 
     @Override

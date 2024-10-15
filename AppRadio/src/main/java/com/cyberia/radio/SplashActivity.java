@@ -59,7 +59,7 @@
 //
 //    private void cancelProgress()
 //    {
-//        MyHandler.getHandler().post(() -> {
+//        MyHandler.post(() -> {
 //            if (progress != null)
 //            {
 //                MyPrint.printOut("Splash close", "Progress not null");
@@ -73,7 +73,7 @@
 //
 //    private void startProgress()
 //    {
-//        MyHandler.getHandler().postDelayed(() -> {
+//        MyHandler.postDelayed(() -> {
 //            if (progress != null)
 //            {
 //                MyPrint.printOut("Splash start", "Progress not null");

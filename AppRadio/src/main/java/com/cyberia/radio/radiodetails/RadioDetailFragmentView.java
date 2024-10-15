@@ -42,7 +42,7 @@ public class RadioDetailFragmentView implements MvcView
 
     public void postRadioDetails(ArrayList<String> detailsList)
     {
-        MyHandler.getHandler().post(() -> {
+        MyHandler.post(() -> {
             ImageView imgStationLogo = rootView.findViewById(R.id.imgRadioDetail);
             String s = detailsList.get(RadioDetailFragment.RadioInfo.URL_THUMB);
 

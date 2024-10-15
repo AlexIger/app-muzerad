@@ -7,15 +7,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
+
 import androidx.annotation.NonNull;
 import androidx.media.session.MediaButtonReceiver;
+
 import com.cyberia.radio.equalizer.EqualizerManager;
 import com.cyberia.radio.eventbus.Events.FailEvent;
 import com.cyberia.radio.global.MyAppContext;
@@ -50,6 +54,8 @@ public class PlayerService extends Service
 
     private volatile MediaButtonHandler mediaButtonHandler;
     private final Context context;
+    private PowerManager.WakeLock wakeLock;
+    private WifiManager.WifiLock wifiLock;
 
 
     public PlayerService()
@@ -61,6 +67,20 @@ public class PlayerService extends Service
     public void onCreate()
     {
         createMediaSession();
+
+        // Acquire WakeLock to keep CPU running
+        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Muze:MyWakeLockTag");
+        wakeLock.acquire();
+
+        // Acquire the WiFi Lock
+        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "Muze::WifiLockTag");
+
+        // Acquire the WiFi Lock to keep WiFi active even in sleep mode
+        if (wifiLock != null) {
+            wifiLock.acquire();
+        }
     }
 
 
@@ -94,7 +114,8 @@ public class PlayerService extends Service
 
     public void stopPlayer()
     {
-        MyHandler.post(() -> {
+        MyHandler.post(() ->
+        {
             if (player != null && isPlaying())
             {
                 player.stop();
@@ -126,7 +147,8 @@ public class PlayerService extends Service
 
     public void startPlayback()
     {
-        MyHandler.getHandler().post(() -> {
+        MyHandler.post(() ->
+        {
             if (player != null)
                 player.setPlayWhenReady(true);
 
@@ -137,7 +159,8 @@ public class PlayerService extends Service
 
     public void pausePlayback()
     {
-        MyHandler.getHandler().post(() -> {
+        MyHandler.post(() ->
+        {
             if (player != null)
                 player.setPlayWhenReady(false);
         });
@@ -147,7 +170,7 @@ public class PlayerService extends Service
     {
         stopPlayer();
 
-        MyHandler.getHandler().post(() -> PlayerService.this.prepareExoPlayer(is, uri));
+        MyHandler.post(() -> PlayerService.this.prepareExoPlayer(is, uri));
     }
 
     public void prepareExoPlayer(InputStream is, Uri uri)
@@ -236,6 +259,8 @@ public class PlayerService extends Service
 
         if (mediaButtonHandler == null)
             mediaButtonHandler = new MediaButtonHandler();
+
+
     }
 
     private boolean mediaButtonEnabled(ComponentName componentName)
@@ -301,7 +326,7 @@ public class PlayerService extends Service
             @Override
             public void onPlayerError(@NonNull EventTime eventTime, @NonNull PlaybackException error)
             {
-                MyPrint.print("Exoplayer", "Player error; error code: " + error.errorCode, 319);
+                MyPrint.printOut("Exoplayer", error.getMessage());
                 EventBus.getDefault().post(new FailEvent(ConnectionClient.msgConnLost));
             }
 
@@ -313,4 +338,15 @@ public class PlayerService extends Service
         });
     }
 
+    public void onDestroy()
+    {
+        super.onDestroy();
+
+        if (wakeLock != null && wakeLock.isHeld())
+            wakeLock.release();
+
+        if (wifiLock != null && wifiLock.isHeld())
+            wifiLock.release();
+
+    }
 }

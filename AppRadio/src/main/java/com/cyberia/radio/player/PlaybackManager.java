@@ -46,7 +46,7 @@ public class PlaybackManager implements ConnectionClient.ConnectionCallback, Ser
     {
         //start the service
         serviceIntent = new Intent(controller, PlayerService.class);
-        controller.startService(serviceIntent);
+        controller.startForegroundService(serviceIntent);
         controller.bindService(serviceIntent, this, Context.BIND_AUTO_CREATE);
     }
 
@@ -167,7 +167,7 @@ public class PlaybackManager implements ConnectionClient.ConnectionCallback, Ser
             {
                 Intent intent = new Intent(controller, PlayerService.class);
                 player.initPlayer(stream, Uri.parse(radioUrl.get()));
-                controller.startService(intent);
+                controller.startForegroundService(intent);
             } catch (Exception e)
             {
                 ExceptionHandler.onException(TAG, e);

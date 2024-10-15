@@ -256,7 +256,14 @@ public class StationsFragment extends ListFragment implements MvcViewEventListen
     public void onDetach()
     {
         super.onDetach();
-        controller = null;
+    }
+
+    @Override
+    public void onDestroyView()
+    {
+        MyPrint.printOut(getClass().getSimpleName(), "onDestroyView is called");
+        super.onDestroyView();
+        stationsFragmentView = null;
     }
 
     @Override
@@ -264,7 +271,7 @@ public class StationsFragment extends ListFragment implements MvcViewEventListen
     {
         super.onDestroy();
         stationsModel = null;
-        stationsFragmentView = null;
+        controller = null;
     }
 
     @Override

@@ -610,7 +610,7 @@ public class EqualizerFragment extends Fragment
 
     public void closeEQ()
     {
-        MyHandler.getHandler().post(new Runnable()
+        MyHandler.post(new Runnable()
         {
             @Override
             public void run()
