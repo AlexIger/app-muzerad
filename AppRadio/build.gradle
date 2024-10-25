@@ -49,7 +49,7 @@ android {
 
     dependencies {
         implementation 'com.google.android.gms:play-services-plus:17.0.0'
-        implementation 'androidx.appcompat:appcompat:1.6.1'
+        implementation 'androidx.appcompat:appcompat:1.7.0'
 //    implementation project(':library')
         implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
@@ -89,7 +89,7 @@ android {
 
         implementation 'com.squareup.picasso:picasso:2.71828'
 
-        implementation 'androidx.preference:preference:1.2.0'
+        implementation 'androidx.preference:preference:1.2.1'
         implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
 
         implementation 'com.diogobernardino:williamchart:2.1'
@@ -97,7 +97,7 @@ android {
 
         implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
 
-        implementation 'org.greenrobot:eventbus:3.3.1'
+        implementation 'org.greenrobot:eventbus:3.3.0'
 
         implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
 
@@ -111,22 +111,22 @@ android {
 
         // JUnit 4
         testImplementation 'junit:junit:4.13.2'
-        androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-        androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-        androidTestImplementation 'androidx.test:runner:1.1.0'
+        androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+        androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+        androidTestImplementation 'androidx.test:runner:1.6.2'
 
         // Core library
-        androidTestImplementation 'androidx.test:core:1.6.0-alpha04'
-        testImplementation 'androidx.test:core:1.5.0'
+        androidTestImplementation 'androidx.test:core:1.6.1'
+        testImplementation 'androidx.test:core:1.6.1'
         testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
 
         // AndroidJUnitRunner and JUnit Rules
-        androidTestImplementation 'androidx.test:runner:1.5.2'
-        androidTestImplementation 'androidx.test:rules:1.5.0'
+        androidTestImplementation 'androidx.test:runner:1.6.2'
+        androidTestImplementation 'androidx.test:rules:1.6.1'
 
         // Assertions
-        androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-        androidTestImplementation 'androidx.test.ext:truth:1.5.0'
+        androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+        androidTestImplementation 'androidx.test.ext:truth:1.6.0'
         androidTestImplementation  'com.google.truth:truth:1.1.4'
 
         // JUnit 5 debug
@@ -158,5 +158,11 @@ android {
     namespace 'com.cyberia.radio'
     buildToolsVersion '34.0.0'
 
+}
+
+dependencies {
+    implementation 'androidx.preference:preference:1.2.1'
+    implementation 'androidx.core:core-splashscreen:1.0.1'
+    implementation 'androidx.core:core:1.13.1'
 }
 

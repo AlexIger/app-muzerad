@@ -198,8 +198,6 @@ public class SearchFragment extends ListFragment implements
         }
 
         isFragmentDirty.set(true);
-
-
     }
 
     void loadStations(String searchKey)
